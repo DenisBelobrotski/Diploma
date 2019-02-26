@@ -5,9 +5,13 @@
 
 #define _USE_MATH_DEFINES
 
+
+
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <cstdio>
+
 
 const int N = 100;
 const double LOWER_BOUND = 0;
