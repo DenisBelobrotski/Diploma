@@ -4,9 +4,8 @@
 cmake_minimum_required (VERSION 3.8)
 
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
-# Add source to this project's executable.
-add_executable (Diploma "Diploma.cpp" "Diploma.h" Plot.cpp Plot.h)
+file(GLOB_RECURSE proj_sources *.cpp)
 
-# TODO: Add tests and install targets if needed.
+add_executable (Diploma ${proj_sources})

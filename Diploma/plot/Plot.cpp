@@ -2,13 +2,16 @@
 // Created by Denis Belobrotski on 2019-02-26.
 //
 
+#include <sstream>
+
 #include "Plot.h"
+#include "Exceptions.h"
 
 
-Plot::Plot() = default;
+plot::Plot::Plot() = default;
 
 
-Plot::Plot(PlotConfig *config, std::vector<Graph> *graphs)
+plot::Plot::Plot(PlotConfig *config, std::vector<Graph> *graphs)
 {
 #ifdef WIN32
     pipe = _popen(GNUPLOT, "w");
@@ -20,7 +23,7 @@ Plot::Plot(PlotConfig *config, std::vector<Graph> *graphs)
 }
 
 
-Plot::~Plot()
+plot::Plot::~Plot()
 {
 #ifdef WIN32
     _pclose(pipe);
@@ -30,18 +33,17 @@ Plot::~Plot()
 }
 
 
-void Plot::makeGraphs()
+void plot::Plot::makeGraphs() noexcept(false)
 {
     if (pipe == nullptr)
     {
-        printf("Could not open gnuplot pipe\n");
-        return;
+        throw exceptions::PipeException("Gnuplot pipe wasn't opened");
     }
 
 #ifdef WIN32
     fprintf(pipe, "set term wxt size %d, %d\n", GNUPLOT_WIN_WIDTH, GNUPLOT_WIN_HEIGHT);
 #else
-    fprintf(pipe, "set term qt size %d, %d\n", config->windowWidth, config->windowWidth);
+    fprintf(pipe, "set term qt size %d, %d\n", config->windowWidth, config->windowHeight);
 #endif
     fprintf(pipe, "set title \"%s\"\n", config->title.c_str());
     fprintf(pipe, "set xlabel \"%s\"\n", config->xAxisName.c_str());

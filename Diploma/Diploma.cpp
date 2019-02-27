@@ -2,14 +2,14 @@
 //
 
 #include "Diploma.h"
-#include "Plot.h"
+#include "plot/Plot.h"
+#include "plot/Utils.h"
 
 void fillVariables(Variables *variables);
 
 double calcIntegral0(Variables *variables);
 
 void printVector(std::ostream *os, std::vector<double> *vector);
-
 
 int main()
 {
@@ -32,94 +32,33 @@ int main()
 
 	std::cout << calcIntegral0(&variables) << std::endl;
 
-//	**** working dir ****
+    std::vector<plot::Point> points0;
+    plot::convertComponentsVectorsToPointsVector(&(variables.r), &(variables.z), &points0);
 
-//    char workingDir[FILENAME_MAX];
-//    size_t size = sizeof(workingDir);
-//    if (!GetCurrentDir(workingDir, size))
-//    {
-//        printf("Could not find working directory\n");
-//        return errno;
-//    }
-//    workingDir[size - 1] = '\0';
-//    printf("The current working directory is %s\n", workingDir);
+    plot::Graph graph0;
+    graph0.title = "Graph 0";
+    graph0.points = points0;
 
-//    **** file output ****
+    std::vector<plot::Graph> graphs;
+    graphs.push_back(graph0);
 
-//    const char *outputFilePath = "result.dat";
-//
-//	FILE* resultOutput;
-//
-//#ifdef __clang__
-//	resultOutput = fopen(outputFilePath, "w");
-//#else
-//	fopen_s(&resultOutput, "result.dat", "w");
-//#endif
-//
-//	if (resultOutput == nullptr)
-//	{
-//		printf("Could not open output file\n");
-//		return 0;
-//	}
+    plot::PlotConfig config0;
+    config0.title = "Plot 0";
+    config0.xAxisName = "Radius";
+    config0.yAxisName = "Height";
+    config0.windowWidth = 800;
+    config0.windowHeight = 800;
 
-//	for(int i = 0; i < N + 1; i++)
-//    {
-//        fprintf(resultOutput, "%e %e\n", variables.r[i], variables.z[i]);
-//    }
-//
-//    fclose(resultOutput);
+    plot::Plot plot0(&config0, &graphs);
 
-//	**** pipe output ****
-
-    FILE* plotPipe;
-
-#ifdef WIN32
-    plotPipe = _popen(GNUPLOT, "w");
-#else
-    plotPipe = popen(GNUPLOT, "w");
-#endif
-
-    if (plotPipe == nullptr)
-    {
-        printf("Could not open gnuplot pipe\n");
-        return -1;
-    }
-
-#ifdef WIN32
-    fprintf(plotPipe, "set term wxt size %d, %d\n", GNUPLOT_WIN_WIDTH, GNUPLOT_WIN_HEIGHT);
-#else
-    fprintf(plotPipe, "set term qt size %d, %d\n", GNUPLOT_WIN_WIDTH, GNUPLOT_WIN_HEIGHT);
-#endif
-    fprintf(plotPipe, "set title \"Magnetic fluid model\"\n");
-    fprintf(plotPipe, "set xlabel \"Radius\"\n");
-    fprintf(plotPipe, "set ylabel \"Height, m\"\n");
-//#ifdef WIN32
-//    fprintf(plotPipe, "plot '%s\\%s' using 1:2 with line notitle\n", workingDir, outputFilePath);
-//#else
-//    fprintf(plotPipe, "plot '%s/%s' using 1:2 with line notitle\n", workingDir, outputFilePath);
-//#endif
-
-    fprintf(plotPipe, "plot '-' title 'A2 = 0' with lines \n");
-    for(int i = 0; i < N + 1; i++)
-    {
-        fprintf(plotPipe, "%lf %lf\n", variables.r[i], variables.z[i]);
-    }
-
-    fprintf(plotPipe, "e\n");
-
-    fflush(plotPipe);
-
-//    std::cin.clear();
-//    std::cin.get();
-
-#ifdef WIN32
-    _pclose(plotPipe);
-#else
-    pclose(plotPipe);
-#endif
+    plot0.makeGraphs();
 
 #ifdef _MSC_VER
-	system("pause");
+    system("pause");
+#else
+    std::cout << "Press enter to exit...";
+    std::cin.clear();
+    std::cin.get();
 #endif
 
 	return 0;
