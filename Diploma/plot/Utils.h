@@ -2,8 +2,8 @@
 // Created by user on 2019-02-27.
 //
 
-#ifndef DIPLOMA_UTILS_H
-#define DIPLOMA_UTILS_H
+#ifndef DIPLOMA_PLOT_UTILS_H
+#define DIPLOMA_PLOT_UTILS_H
 
 #include "Plot.h"
 
@@ -15,4 +15,4 @@ namespace plot
                                                 std::vector<Point> *pointsVector) noexcept(false);
 }
 
-#endif //DIPLOMA_UTILS_H
+#endif //DIPLOMA_PLOT_UTILS_H

@@ -8,7 +8,12 @@
 #include "Exceptions.h"
 
 
-plot::Plot::Plot() = default;
+plot::Plot::Plot()
+{
+	pipe = nullptr;
+	config = nullptr;
+	graphs = nullptr;
+}
 
 
 plot::Plot::Plot(PlotConfig *config, std::vector<Graph> *graphs)
@@ -25,6 +30,9 @@ plot::Plot::Plot(PlotConfig *config, std::vector<Graph> *graphs)
 
 plot::Plot::~Plot()
 {
+	delete this->config;
+	delete this->graphs;
+
 #ifdef WIN32
     _pclose(pipe);
 #else
@@ -41,7 +49,7 @@ void plot::Plot::makeGraphs() noexcept(false)
     }
 
 #ifdef WIN32
-    fprintf(pipe, "set term wxt size %d, %d\n", GNUPLOT_WIN_WIDTH, GNUPLOT_WIN_HEIGHT);
+    fprintf(pipe, "set term wxt size %d, %d\n", config->windowWidth, config->windowHeight);
 #else
     fprintf(pipe, "set term qt size %d, %d\n", config->windowWidth, config->windowHeight);
 #endif

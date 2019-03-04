@@ -2,12 +2,10 @@
 // Created by denis Belobrotski on 2019-02-26.
 //
 
-#ifndef DIPLOMA_GNUPLOTWRAPPER_H
-#define DIPLOMA_GNUPLOTWRAPPER_H
+#ifndef DIPLOMA_PLOT_H
+#define DIPLOMA_PLOT_H
 
 #define GNUPLOT             "gnuplot"
-#define GNUPLOT_WIN_WIDTH   1280
-#define GNUPLOT_WIN_HEIGHT  720
 
 
 #ifdef WIN32
@@ -61,4 +59,4 @@ namespace plot {
 
 }
 
-#endif //DIPLOMA_GNUPLOTWRAPPER_H
+#endif //DIPLOMA_PLOT_H

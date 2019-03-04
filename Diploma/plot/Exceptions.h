@@ -2,8 +2,8 @@
 // Created by user on 2019-02-27.
 //
 
-#ifndef DIPLOMA_PIPEEXCEPTION_H
-#define DIPLOMA_PIPEEXCEPTION_H
+#ifndef DIPLOMA_PLOT_EXCEPTIONS_H
+#define DIPLOMA_PLOT_EXCEPTIONS_H
 
 #include <stdexcept>
 
@@ -32,4 +32,4 @@ namespace plot::exceptions
 }
 
 
-#endif //DIPLOMA_PIPEEXCEPTION_H
+#endif //DIPLOMA_PLOT_EXCEPTIONS_H
