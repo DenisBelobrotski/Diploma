@@ -68,7 +68,7 @@ void fillVariables(Variables *variables)
 
 plot::Plot* configMagneticFluidPlot(std::vector<Variables> *iterationVariables, std::vector<int> *iterationNumbers)
 {
-	std::vector<plot::Graph> *graphs = new std::vector<plot::Graph>();
+	auto graphs = new std::vector<plot::Graph>();
 
 	for (int i = 0; i < iterationNumbers->size(); i++)
 	{
@@ -125,17 +125,40 @@ double calcIntegral0(Variables *variables)
 }
 
 
+int sgn(double value)
+{
+	if (value < 0)
+	{
+		return -1;
+	}
+	else if (value > 0)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+
 double calcL(double I0)
 {
-	return pow(U / I0, 1.0 / 3);
+	return sgn(I0) * pow(U / fabs(I0), 1.0 / 3);
 }
 
 
 double calcLowerPhi(double r, double L)
 {
+	if (A2 == 0.0)
+	{
+		return 1;
+	}
 	double tmp = r * L / A2;
 
-	return tmp * sinh(1 / tmp);
+	double result = tmp * sinh(1 / tmp);
+
+	return result;
 }
 
 
@@ -204,7 +227,8 @@ void calcBeta(Variables *variables, Variables *prevVariables)
 
 		double upperPhi = calcUpperPhi(lowerGamma, I1, I2, tmpBeta, tmpR, tmpZ, L);
 
-		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi + (1 - TAU) * (variables->beta[i] - variables->beta[i + 1] + STEP * upperPhi);
+		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi + 
+							(1 - TAU) * (variables->beta[i] - variables->beta[i + 1] + STEP * upperPhi);
 	}
 }
 
@@ -251,19 +275,19 @@ void calcResult(std::vector<Variables> &iterationVariables, std::vector<int> &it
 
 	fillVariables(&variables0);
 
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		calcIteration(&variables0, nullptr);
 	}
 
-	printVector(&std::cout, &(variables0.s));
-	std::cout << "************************" << std::endl;
-	printVector(&std::cout, &(variables0.r));
-	std::cout << "************************" << std::endl;
-	printVector(&std::cout, &(variables0.z));
-	std::cout << "************************" << std::endl;
-	printVector(&std::cout, &(variables0.beta));
-	std::cout << "************************" << std::endl;
+	// printVector(&std::cout, &(variables0.s));
+	// std::cout << "************************" << std::endl;
+	// printVector(&std::cout, &(variables0.r));
+	// std::cout << "************************" << std::endl;
+	// printVector(&std::cout, &(variables0.z));
+	// std::cout << "************************" << std::endl;
+	// printVector(&std::cout, &(variables0.beta));
+	// std::cout << "************************" << std::endl;
 
 	iterationVariables.push_back(variables0);
 
