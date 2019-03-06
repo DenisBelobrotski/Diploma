@@ -2,8 +2,7 @@
 // Created by user on 2019-02-27.
 //
 
-#ifndef DIPLOMA_PLOT_EXCEPTIONS_H
-#define DIPLOMA_PLOT_EXCEPTIONS_H
+#pragma once
 
 #include <stdexcept>
 
@@ -30,6 +29,3 @@ namespace plot::exceptions
     };
 
 }
-
-
-#endif //DIPLOMA_PLOT_EXCEPTIONS_H

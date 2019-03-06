@@ -2,8 +2,7 @@
 // Created by denis Belobrotski on 2019-02-26.
 //
 
-#ifndef DIPLOMA_PLOT_H
-#define DIPLOMA_PLOT_H
+#pragma once
 
 #define GNUPLOT             "gnuplot"
 
@@ -58,5 +57,3 @@ namespace plot {
     };
 
 }
-
-#endif //DIPLOMA_PLOT_H
