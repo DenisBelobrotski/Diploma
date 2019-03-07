@@ -1,8 +1,8 @@
-﻿// Diploma.cpp : Defines the entry point for the application.
+// Diploma.cpp : Defines the entry point for the application.
 //
 
-#include <cstdio>
 #include <sstream>
+#include <iostream>
 #include "Diploma.h"
 #include "utils/Utils.h"
 #include "plot/Plot.h"
@@ -26,13 +26,7 @@ int main()
 	plot::Plot *magneticFluidPlot = configMagneticFluidPlot(&iterationVariables, &iterationNumbers);
 	magneticFluidPlot->makeGraphs();
 
-#ifdef _MSC_VER
-    system("pause");
-#else
-    std::cout << "Press enter to exit...";
-    std::cin.clear();
-    std::cin.get();
-#endif
+	utils::pauseExecution();
 
 	delete magneticFluidPlot;
 

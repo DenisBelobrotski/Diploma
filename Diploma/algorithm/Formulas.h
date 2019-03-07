@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace algorithm
 {
 	int sgn(double value);
