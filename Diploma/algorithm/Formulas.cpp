@@ -1,6 +1,7 @@
 #include "Formulas.h"
 #include <math.h>
 #include "Algorithm.h"
+#include <iostream>
 
 
 int algorithm::sgn(double value)
@@ -33,7 +34,18 @@ double algorithm::calcLowerPhi(double r, double L)
 	}
 	double tmp = r * L / A2;
 
-	double result = tmp * sinh(1 / tmp);
+	double invertTmp = 1 / tmp;
+
+	double sinH = sinh(invertTmp);
+
+	double result = tmp * sinH;
+
+#if LOG_LOWER_PHI
+	std::cout << "r: " << r << " L: " << L << " A2: " << A2 << std::endl;
+	std::cout << "tmp: " << tmp << " invertTmp: " << invertTmp << " sinH: " << sinH << std::endl;
+	std::cout << "result: " << result << std::endl;
+	std::cout << "************" << std::endl;
+#endif
 
 	return result;
 }

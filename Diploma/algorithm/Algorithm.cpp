@@ -4,19 +4,20 @@
 #include "Integrals.h"
 
 #include <iostream>
+#include <algorithm>
 
 
 namespace algorithm
 {
 	void fillVariables(Variables *variables);
 
-	void calcBeta(Variables *variables, Variables *prevVariables);
+	void calcBeta(Variables *variables);
 
 	void calcRadius(Variables *variables);
 
 	void calcHeight(Variables *variables);
 
-	void calcIteration(Variables *variables, Variables *prevVariables);
+	void calcIteration(Variables *variables);
 }
 
 
@@ -35,7 +36,7 @@ void algorithm::fillVariables(Variables *variables)
 }
 
 
-void algorithm::calcBeta(Variables *variables, Variables *prevVariables)
+void algorithm::calcBeta(Variables *variables)
 {
 	double r0 = variables->r[0];
 	double r1 = variables->r[N];
@@ -47,6 +48,17 @@ void algorithm::calcBeta(Variables *variables, Variables *prevVariables)
 
 	double lowerGamma = calcLowerGamma(r0, r1, I1, I2, L);
 
+#if LOG_BETA
+	std::cout << "r0: " << r0 << " r1: " << r1 << std::endl;
+	std::cout << "I0: " << I0 << " L: " << L << std::endl;
+	std::cout << "I1: " << I1 << " I2: " << I2 << std::endl;
+	std::cout << "*****************" << std::endl;
+#endif
+
+#if SIMPLE_RELAXATION_FORMULA
+	std::vector<double> prevBeta = variables->beta;
+#endif
+
 	for (int i = N - 1; i > 0; i--)
 	{
 		double tmpZ = (variables->z[i] + variables->z[i + 1]) / 2;
@@ -55,9 +67,27 @@ void algorithm::calcBeta(Variables *variables, Variables *prevVariables)
 
 		double upperPhi = calcUpperPhi(lowerGamma, I1, I2, tmpBeta, tmpR, tmpZ, L);
 
+#if SIMPLE_RELAXATION_FORMULA
+		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi;
+#else
 		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi +
 			(1 - TAU) * (variables->beta[i] - variables->beta[i + 1] + STEP * upperPhi);
+#endif
+
+#if LOG_BETA
+		std::cout << "tmpR: " << tmpR << " tmpZ: " << tmpZ << std::endl;
+		std::cout << "tmpBeta: " << tmpBeta << " upperPhi: " << upperPhi << std::endl;
+		std::cout << "newBeta: " << variables->beta[i] << std::endl;
+		std::cout << "**********" << std::endl;
+#endif
 	}
+
+#if SIMPLE_RELAXATION_FORMULA
+	for (int i = 0; i < N + 1; i++)
+	{
+		variables->beta[i] = (1 - TAU) * prevBeta[i] + TAU * variables->beta[i];
+	}
+#endif
 }
 
 
@@ -85,63 +115,58 @@ void algorithm::calcHeight(Variables *variables)
 }
 
 
-void algorithm::calcIteration(Variables *variables, Variables *prevVariables)
+void algorithm::calcIteration(Variables *variables)
 {
-	calcBeta(variables, prevVariables);
+	calcBeta(variables);
 	calcRadius(variables);
 	calcHeight(variables);
 }
 
 
-void algorithm::calcResult(std::vector<Variables> &iterationVariables, std::vector<int> &iterationNumbers)
+void algorithm::calcResult(std::vector<Variables> &experimentVariables, std::vector<int> &experimentNumbers)
 {
-	Variables variables0;
-	variables0.s = std::vector<double>(N + 1);
-	variables0.r = std::vector<double>(N + 1);
-	variables0.z = std::vector<double>(N + 1);
-	variables0.beta = std::vector<double>(N + 1);
+	Variables variables;
+	variables.s = std::vector<double>(N + 1);
+	variables.r = std::vector<double>(N + 1);
+	variables.z = std::vector<double>(N + 1);
+	variables.beta = std::vector<double>(N + 1);
 
-	fillVariables(&variables0);
+	fillVariables(&variables);
 
-	for (int i = 0; i < 1; i++)
+	double residual;
+	long long counter = 0;
+
+	std::vector<double> prevR;
+	std::vector<double> prevZ;
+
+	do
 	{
-		calcIteration(&variables0, nullptr);
+		prevR = variables.r;
+		prevZ = variables.z;
+
+		calcIteration(&variables);
+
+		residual = std::max(utils::calcResidual(prevR, variables.r),
+				utils::calcResidual(prevZ, variables.z));
+
+		counter++;
 	}
+	while (residual > ACCURACY);
 
-	utils::printVector(&std::cout, &(variables0.s));
+#if LOG_RESULTS
+	utils::printVector(&std::cout, &(variables.s));
 	std::cout << "************************" << std::endl;
-	utils::printVector(&std::cout, &(variables0.r));
+	utils::printVector(&std::cout, &(variables.r));
 	std::cout << "************************" << std::endl;
-	utils::printVector(&std::cout, &(variables0.z));
+	utils::printVector(&std::cout, &(variables.z));
 	std::cout << "************************" << std::endl;
-	utils::printVector(&std::cout, &(variables0.beta));
+	utils::printVector(&std::cout, &(variables.beta));
 	std::cout << "************************" << std::endl;
+#endif
 
-	iterationVariables.push_back(variables0);
+	experimentVariables.push_back(variables);
 
-	iterationNumbers.push_back(0);
+	experimentNumbers.push_back(0);
 
-	// for (int i = 1; i < 2; i++)
-	// {
-	// 	Variables variables;
-	// 	variables.s = std::vector<double>(N + 1);
-	// 	variables.r = std::vector<double>(N + 1);
-	// 	variables.z = std::vector<double>(N + 1);
-	// 	variables.beta = std::vector<double>(N + 1);
-	//
-	// 	calcIteration(&variables, &(iterationVariables[i - 1]));
-	//
-	// 	iterationVariables.push_back(variables);
-	//
-	// 	printVector(&std::cout, &(variables.s));
-	// 	std::cout << "************************" << std::endl;
-	// 	printVector(&std::cout, &(variables.r));
-	// 	std::cout << "************************" << std::endl;
-	// 	printVector(&std::cout, &(variables.z));
-	// 	std::cout << "************************" << std::endl;
-	// 	printVector(&std::cout, &(variables.beta));
-	// 	std::cout << "************************" << std::endl;
-	// }
-	//
-	// iterationNumbers.push_back(1);
+	std::cout << "experiment " << experimentNumbers.back() << ": iterations count " << counter << std::endl;
 }

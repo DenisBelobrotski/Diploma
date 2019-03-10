@@ -8,18 +8,25 @@
 #include <math.h>
 
 
+#define LOG_BETA 0
+#define LOG_RESULTS 0
+
+#define SIMPLE_RELAXATION_FORMULA 1
+
+
 namespace algorithm
 {
-	const int N = 1000;
+	const int N = 100;
 	const double LOWER_BOUND = 0;
 	const double UPPER_BOUND = 1;
 	const double STEP = (UPPER_BOUND - LOWER_BOUND) / N;
 	const double TAU = 1;
+	const double ACCURACY = 1E-5;
 
-	const double U = 400;
-	const double B0 = 1;
-	const double A1 = 6;
-	const double A2 = 3; //0, 1, 3, 6
+	const double U = 3; //400
+	const double B0 = 1; //1
+	const double A1 = 60; //6
+	const double A2 = 0.06; //0, 1, 3, 6
 	const double ALPHA = M_PI_4; //M_PI_4, M_PI_2
 
 
@@ -32,5 +39,5 @@ namespace algorithm
 		double L;
 	};
 
-	void calcResult(std::vector<Variables> &iterationVariables, std::vector<int> &iterationNumbers);
+	void calcResult(std::vector<Variables> &experimentVariables, std::vector<int> &experimentNumbers);
 }

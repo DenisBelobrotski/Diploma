@@ -12,13 +12,14 @@ void plot::convertComponentsVectorsToPointsVector(std::vector<double> *xComponen
                                                   std::vector<double> *yComponents,
                                                   std::vector<Point> *pointsVector) noexcept(false)
 {
-    unsigned long xComponentsSize = xComponents->size();
-    unsigned long yComponentsSize = yComponents->size();
+    auto xComponentsSize = xComponents->size();
+    auto yComponentsSize = yComponents->size();
 
     if (xComponentsSize != yComponentsSize)
     {
         std::stringstream msgStream;
-        msgStream << "Components vectors sizes isn't equal: x size: " << xComponentsSize << ", y size: " << yComponentsSize;
+        msgStream << "Components vectors sizes isn't equal: x size: " << xComponentsSize
+                  << ", y size: " << yComponentsSize;
 
         throw exceptions::VectorSizeException(msgStream.str().c_str());
     }

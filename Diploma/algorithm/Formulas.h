@@ -1,6 +1,9 @@
 #pragma once
 
 
+#define LOG_LOWER_PHI 0
+
+
 namespace algorithm
 {
 	int sgn(double value);

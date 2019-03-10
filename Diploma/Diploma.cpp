@@ -17,13 +17,13 @@ plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> *iterationVariabl
 
 int main()
 {
-	std::vector<algorithm::Variables> iterationVariables;
+	std::vector<algorithm::Variables> experimentVariables;
 
-	std::vector<int> iterationNumbers;
+	std::vector<int> experimentNumbers;
 
-	algorithm::calcResult(iterationVariables, iterationNumbers);
+	algorithm::calcResult(experimentVariables, experimentNumbers);
 
-	plot::Plot *magneticFluidPlot = configMagneticFluidPlot(&iterationVariables, &iterationNumbers);
+	plot::Plot *magneticFluidPlot = configMagneticFluidPlot(&experimentVariables, &experimentNumbers);
 	magneticFluidPlot->makeGraphs();
 
 	utils::pauseExecution();
