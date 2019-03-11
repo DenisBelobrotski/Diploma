@@ -20,14 +20,14 @@ namespace algorithm
 	const double LOWER_BOUND = 0;
 	const double UPPER_BOUND = 1;
 	const double STEP = (UPPER_BOUND - LOWER_BOUND) / N;
-	const double TAU = 1;
+	const double TAU = 0.1;
 	const double ACCURACY = 1E-5;
 
-	const double U = 3; //400
-	const double B0 = 1; //1
-	const double A1 = 60; //6
-	const double A2 = 0.06; //0, 1, 3, 6
-	const double ALPHA = M_PI_4; //M_PI_4, M_PI_2
+	inline double U = 3; //400
+    inline double B0 = 1; //1
+    inline double A1 = 60; //6
+    inline double A2 = 0.05; //0, 1, 3, 6
+    inline double ALPHA = M_PI_4; //M_PI_4, M_PI_2
 
 
 	struct Variables

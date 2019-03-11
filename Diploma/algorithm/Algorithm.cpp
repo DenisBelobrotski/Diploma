@@ -139,19 +139,27 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables, std::vec
 	std::vector<double> prevR;
 	std::vector<double> prevZ;
 
-	do
-	{
-		prevR = variables.r;
-		prevZ = variables.z;
+	while (A2 <= 1.6)
+    {
+        std::cout << A2 << std::endl;
 
-		calcIteration(&variables);
+        do
+        {
+            prevR = variables.r;
+            prevZ = variables.z;
 
-		residual = std::max(utils::calcResidual(prevR, variables.r),
-				utils::calcResidual(prevZ, variables.z));
+            calcIteration(&variables);
 
-		counter++;
+            residual = std::max(utils::calcResidual(prevR, variables.r),
+                    utils::calcResidual(prevZ, variables.z));
+
+            counter++;
+        }
+        while (residual > ACCURACY);
+
+        A2 += 0.05;
+
 	}
-	while (residual > ACCURACY);
 
 #if LOG_RESULTS
 	utils::printVector(&std::cout, &(variables.s));
