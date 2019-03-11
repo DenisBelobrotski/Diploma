@@ -10,20 +10,22 @@
 #include "algorithm/Algorithm.h"
 
 
-plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> *iterationVariables, std::vector<int> *iterationNumbers);
+plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iterationVariables, 
+									std::vector<algorithm::IterationInfo> &iterationsInfo);
 
-plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> *iterationVariables, std::vector<int> *iterationNumbers);
+plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> &iterationVariables, 
+							 std::vector<algorithm::IterationInfo> &iterationsInfo);
 
 
 int main()
 {
 	std::vector<algorithm::Variables> experimentVariables;
 
-	std::vector<int> experimentNumbers;
+	std::vector<algorithm::IterationInfo> iterationsInfo;
 
-	algorithm::calcResult(experimentVariables, experimentNumbers);
+	algorithm::calcResult(experimentVariables, iterationsInfo);
 
-	plot::Plot *magneticFluidPlot = configMagneticFluidPlot(&experimentVariables, &experimentNumbers);
+	plot::Plot *magneticFluidPlot = configMagneticFluidPlot(experimentVariables, iterationsInfo);
 	magneticFluidPlot->makeGraphs();
 
 	utils::pauseExecution();
@@ -34,21 +36,26 @@ int main()
 }
 
 
-plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> *iterationVariables, std::vector<int> *iterationNumbers)
+plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iterationVariables, 
+									std::vector<algorithm::IterationInfo> &iterationsInfo)
 {
 	auto graphs = new std::vector<plot::Graph>();
 
-	for (int i = 0; i < iterationNumbers->size(); i++)
+	for (int i = 0; i < iterationsInfo.size(); i++)
 	{
-		int currentIteration = (*iterationNumbers)[i];
+		int currentIteration = iterationsInfo[i].index;
 
 		std::vector<plot::Point> points;
-		plot::convertComponentsVectorsToPointsVector(&((*iterationVariables)[currentIteration].r),
-			&((*iterationVariables)[currentIteration].z),
-			&points);
+		plot::convertComponentsVectorsToPointsVector(iterationVariables[currentIteration].r,
+			iterationVariables[currentIteration].z,
+			points);
 
 		std::stringstream titleStream;
-		titleStream << "Iteration " << currentIteration;
+		titleStream << "#" << currentIteration << " - "
+					<< "U: " << iterationsInfo[i].u
+					<< ", B0: " << iterationsInfo[i].b0
+					<< ", A1: " << iterationsInfo[i].a1
+					<< ", A2: " << iterationsInfo[i].a2;
 
 		plot::Graph graph;
 		graph.title = titleStream.str();
@@ -72,7 +79,8 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> *iteration
 }
 
 
-plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> *iterationVariables, std::vector<int> *iterationNumbers)
+plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> &iterationVariables, 
+							 std::vector<algorithm::IterationInfo> &iterationsInfo)
 {
 	return nullptr;
 }

@@ -8,12 +8,12 @@
 #include "Exceptions.h"
 
 
-void plot::convertComponentsVectorsToPointsVector(std::vector<double> *xComponents,
-                                                  std::vector<double> *yComponents,
-                                                  std::vector<Point> *pointsVector) noexcept(false)
+void plot::convertComponentsVectorsToPointsVector(std::vector<double> &xComponents,
+                                                  std::vector<double> &yComponents,
+                                                  std::vector<Point> &pointsVector) noexcept(false)
 {
-    auto xComponentsSize = xComponents->size();
-    auto yComponentsSize = yComponents->size();
+    auto xComponentsSize = xComponents.size();
+    auto yComponentsSize = yComponents.size();
 
     if (xComponentsSize != yComponentsSize)
     {
@@ -24,11 +24,11 @@ void plot::convertComponentsVectorsToPointsVector(std::vector<double> *xComponen
         throw exceptions::VectorSizeException(msgStream.str().c_str());
     }
 
-    pointsVector->resize(xComponentsSize);
+    pointsVector.resize(xComponentsSize);
 
-    for (auto i = 0; i < pointsVector->size(); i++)
+    for (auto i = 0; i < pointsVector.size(); i++)
     {
-        (*pointsVector)[i].x = (*xComponents)[i];
-        (*pointsVector)[i].y = (*yComponents)[i];
+        pointsVector[i].x = xComponents[i];
+        pointsVector[i].y = yComponents[i];
     }
 }

@@ -40,5 +40,17 @@ namespace algorithm
 		double L;
 	};
 
-	void calcResult(std::vector<Variables> &experimentVariables, std::vector<int> &experimentNumbers);
+
+	struct IterationInfo
+	{
+		double index;
+		double u;
+		double b0;
+		double a1;
+		double a2;
+		double alpha;
+	};
+
+	void calcResult(std::vector<Variables> &experimentVariables, 
+					std::vector<IterationInfo> &iterationsInfo);
 }

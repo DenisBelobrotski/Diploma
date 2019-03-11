@@ -123,7 +123,8 @@ void algorithm::calcIteration(Variables *variables)
 }
 
 
-void algorithm::calcResult(std::vector<Variables> &experimentVariables, std::vector<int> &experimentNumbers)
+void algorithm::calcResult(std::vector<Variables> &experimentVariables, 
+						   std::vector<IterationInfo> &iterationsInfo)
 {
 	Variables variables;
 	variables.s = std::vector<double>(N + 1);
@@ -136,6 +137,7 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables, std::vec
 	double residual;
 	long long iterationsCounter = 0;
 	long long experiementsCounter = 0;
+	IterationInfo currentIterationInfo;
 
 	std::vector<double> prevR;
 	std::vector<double> prevZ;
@@ -162,13 +164,19 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables, std::vec
 
 		if (experiementsCounter % WRITE_SOLUTION_PARAM == 0)
 		{
-			experimentNumbers.push_back(experiementsCounter);
+			currentIterationInfo.index = experiementsCounter;
+			currentIterationInfo.u = U;
+			currentIterationInfo.b0 = B0;
+			currentIterationInfo.a1 = A1;
+			currentIterationInfo.a2 = A2;
+			currentIterationInfo.alpha = ALPHA;
+
+			iterationsInfo.push_back(currentIterationInfo);
 		}
 
 		experiementsCounter++;
 
         A2 += 0.05;
-
 	}
 
 #if LOG_RESULTS
@@ -183,5 +191,5 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables, std::vec
 #endif
 
 
-	std::cout << "experiment " << experimentNumbers.back() << ": iterations count " << iterationsCounter << std::endl;
+	std::cout << "iterations count: " << iterationsCounter << std::endl;
 }

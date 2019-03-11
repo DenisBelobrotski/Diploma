@@ -10,7 +10,7 @@
 
 namespace plot
 {
-    void convertComponentsVectorsToPointsVector(std::vector<double> *xComponents,
-                                                std::vector<double> *yComponents,
-                                                std::vector<Point> *pointsVector) noexcept(false);
+    void convertComponentsVectorsToPointsVector(std::vector<double> &xComponents,
+                                                std::vector<double> &yComponents,
+                                                std::vector<Point> &pointsVector) noexcept(false);
 }
