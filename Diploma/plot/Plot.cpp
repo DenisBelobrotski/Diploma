@@ -41,6 +41,23 @@ plot::Plot::~Plot()
 }
 
 
+void plot::Plot::configPlot()
+{
+#ifdef WIN32
+	fprintf(pipe, "set term wxt size %d, %d\n", config->windowWidth, config->windowHeight);
+#else
+	fprintf(pipe, "set term qt size %d, %d\n", config->windowWidth, config->windowHeight);
+#endif
+	fprintf(pipe, "set title \"%s\"\n", config->title.c_str());
+	fprintf(pipe, "set xlabel \"%s\"\n", config->xAxisName.c_str());
+	fprintf(pipe, "set ylabel \"%s\"\n", config->yAxisName.c_str());
+	if (config->equalAxes)
+	{
+		fprintf(pipe, "set size ratio -1\n");
+	}
+}
+
+
 void plot::Plot::makeGraphs() noexcept(false)
 {
     if (pipe == nullptr)
@@ -48,27 +65,25 @@ void plot::Plot::makeGraphs() noexcept(false)
         throw exceptions::PipeException("Gnuplot pipe wasn't opened");
     }
 
-#ifdef WIN32
-    fprintf(pipe, "set term wxt size %d, %d\n", config->windowWidth, config->windowHeight);
-#else
-    fprintf(pipe, "set term qt size %d, %d\n", config->windowWidth, config->windowHeight);
-#endif
-    fprintf(pipe, "set title \"%s\"\n", config->title.c_str());
-    fprintf(pipe, "set xlabel \"%s\"\n", config->xAxisName.c_str());
-    fprintf(pipe, "set ylabel \"%s\"\n", config->yAxisName.c_str());
+	configPlot();
 
-    for (auto i = 0; i < graphs->size(); i++)
+	auto graphsNum = graphs->size();
+
+	fprintf(pipe, "plot '-' with lines title '%s'", (*graphs)[0].title.c_str());
+	for (auto i = 1; i < graphsNum; i++)
+	{
+		fprintf(pipe, ", '-' with lines title '%s'", (*graphs)[i].title.c_str());
+	}
+	fprintf(pipe, "\n");
+
+    for (auto i = 0; i < graphsNum; i++)
     {
-
-        fprintf(pipe, "plot '-' title '%s' with lines \n", (*graphs)[i].title.c_str());
-
         for (auto j = 0; j < (*graphs)[i].points.size(); j++)
         {
             fprintf(pipe, "%lf %lf\n", (*graphs)[i].points[j].x, (*graphs)[i].points[j].y);
         }
 
         fprintf(pipe, "e\n");
+		fflush(pipe);
     }
-
-    fflush(pipe);
 }

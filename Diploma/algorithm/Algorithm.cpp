@@ -134,7 +134,8 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables, std::vec
 	fillVariables(&variables);
 
 	double residual;
-	long long counter = 0;
+	long long iterationsCounter = 0;
+	long long experiementsCounter = 0;
 
 	std::vector<double> prevR;
 	std::vector<double> prevZ;
@@ -153,9 +154,18 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables, std::vec
             residual = std::max(utils::calcResidual(prevR, variables.r),
                     utils::calcResidual(prevZ, variables.z));
 
-            counter++;
+            iterationsCounter++;
         }
         while (residual > ACCURACY);
+
+		experimentVariables.push_back(variables);
+
+		if (experiementsCounter % WRITE_SOLUTION_PARAM == 0)
+		{
+			experimentNumbers.push_back(experiementsCounter);
+		}
+
+		experiementsCounter++;
 
         A2 += 0.05;
 
@@ -172,9 +182,6 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables, std::vec
 	std::cout << "************************" << std::endl;
 #endif
 
-	experimentVariables.push_back(variables);
 
-	experimentNumbers.push_back(0);
-
-	std::cout << "experiment " << experimentNumbers.back() << ": iterations count " << counter << std::endl;
+	std::cout << "experiment " << experimentNumbers.back() << ": iterations count " << iterationsCounter << std::endl;
 }

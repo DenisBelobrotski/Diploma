@@ -38,6 +38,7 @@ namespace plot {
         std::string title;
         std::string xAxisName;
         std::string yAxisName;
+		bool equalAxes;
     };
 
     class Plot {
@@ -55,6 +56,7 @@ namespace plot {
         std::vector<Graph> *graphs;
 
         Plot();
+		void configPlot();
     };
 
 }

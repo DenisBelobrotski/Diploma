@@ -62,8 +62,9 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> *iteration
 	config->title = "Magnetic fluid";
 	config->xAxisName = "Radius";
 	config->yAxisName = "Height";
-	config->windowWidth = 800;
-	config->windowHeight = 800;
+	config->windowWidth = 1280;
+	config->windowHeight = 720;
+	config->equalAxes = true;
 
 	auto plot = new plot::Plot(config, graphs);
 
