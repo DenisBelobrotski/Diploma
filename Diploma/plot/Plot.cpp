@@ -76,14 +76,14 @@ void plot::Plot::makeGraphs() noexcept(false)
 	}
 	fprintf(pipe, "\n");
 
-    for (auto i = 0; i < graphsNum; i++)
-    {
-        for (auto j = 0; j < (*graphs)[i].points.size(); j++)
-        {
-            fprintf(pipe, "%lf %lf\n", (*graphs)[i].points[j].x, (*graphs)[i].points[j].y);
-        }
+	for (auto& currentGraph : *graphs)
+	{
+		for (auto& currentPoint : currentGraph.points)
+		{
+			fprintf(pipe, "%lf %lf\n", currentPoint.x, currentPoint.y);
+		}
 
-        fprintf(pipe, "e\n");
+		fprintf(pipe, "e\n");
 		fflush(pipe);
-    }
+	}
 }
