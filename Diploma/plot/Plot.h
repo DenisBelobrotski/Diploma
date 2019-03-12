@@ -20,28 +20,44 @@
 #include <string>
 
 
-namespace plot {
+namespace plot 
+{
 
-    struct Point {
+	struct Range
+	{
+		double start;
+		double length;
+
+		Range() : start(0), length(0) {}
+		Range(double start, double length) : start(start), length(length) {}
+	};
+
+    struct Point 
+	{
         double x;
         double y;
     };
 
-    struct Graph {
+    struct Graph 
+	{
         std::vector<Point> points;
         std::string title;
     };
 
-    struct PlotConfig {
+    struct PlotConfig 
+	{
         int windowWidth;
         int windowHeight;
         std::string title;
         std::string xAxisName;
         std::string yAxisName;
+		Range xAxisRange;
+		Range yAxisRange;
 		bool equalAxes;
     };
 
-    class Plot {
+    class Plot 
+	{
 
     public:
         Plot(PlotConfig *config, std::vector<Graph> *graphs);

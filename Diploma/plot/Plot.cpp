@@ -51,6 +51,18 @@ void plot::Plot::configPlot()
 	fprintf(pipe, "set title \"%s\"\n", config->title.c_str());
 	fprintf(pipe, "set xlabel \"%s\"\n", config->xAxisName.c_str());
 	fprintf(pipe, "set ylabel \"%s\"\n", config->yAxisName.c_str());
+
+	Range xAxisRange = config->xAxisRange;
+	Range yAxisRange = config->yAxisRange;
+	if (xAxisRange.length > 0)
+	{
+		fprintf(pipe, "set xrange [%lf:%lf]\n", xAxisRange.start, xAxisRange.start + xAxisRange.length);
+	}
+	if (yAxisRange.length > 0)
+	{
+		fprintf(pipe, "set yrange [%lf:%lf]\n", yAxisRange.start, yAxisRange.start + yAxisRange.length);
+	}
+
 	if (config->equalAxes)
 	{
 		fprintf(pipe, "set size ratio -1\n");
