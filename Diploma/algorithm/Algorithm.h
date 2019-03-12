@@ -24,11 +24,11 @@ namespace algorithm
 	const double ACCURACY = 1E-5;
 	const int WRITE_SOLUTION_PARAM = 10;
 
-	inline double U = 3; //400
-    inline double B0 = 1; //1
-    inline double A1 = 60; //6
-    inline double A2 = 0.05; //0, 1, 3, 6
-    inline double ALPHA = M_PI_4; //M_PI_4, M_PI_2
+	const double INITIAL_U = 3; //400
+    const double INITIAL_B0 = 1; //1
+    const double INITIAL_A1 = 60; //6
+    const double INITIAL_A2 = 0.05; //0, 1, 3, 6
+    const double INITIAL_ALPHA = M_PI_4; //M_PI_4, M_PI_2
 
 
 	struct Variables
@@ -38,6 +38,11 @@ namespace algorithm
 		std::vector<double> z;
 		std::vector<double> beta;
 		double L;
+		double U;
+		double B0;
+		double A1;
+		double A2;
+		double ALPHA;
 	};
 
 

@@ -47,7 +47,7 @@ double algorithm::calcIntegral1(Variables *variables)
 		double tmpZ = (variables->z[i - 1] + variables->z[i]) / 2;
 		double tmpR = (variables->r[i - 1] + variables->r[i]) / 2;
 		double tmpBeta = (variables->beta[i - 1] + variables->beta[i]) / 2;
-		double lowerPhi = calcLowerPhi(tmpR, variables->L);
+		double lowerPhi = calcLowerPhi(tmpR, variables->L, variables->A2);
 		double tmp = lowerPhi * tmpZ * tmpR * cos(tmpBeta);
 		result += tmp;
 #if LOG_INTEGRAL_1
@@ -82,7 +82,7 @@ double algorithm::calcIntegral2(Variables *variables)
 	{
 		double tmpR = (variables->r[i - 1] + variables->r[i]) / 2;
 		double tmpBeta = (variables->beta[i - 1] + variables->beta[i]) / 2;
-		double lowerPhi = calcLowerPhi(tmpR, variables->L);
+		double lowerPhi = calcLowerPhi(tmpR, variables->L, variables->A2);
 		double tmp = lowerPhi * tmpR * cos(tmpBeta);
 		result += tmp;
 #if LOG_INTEGRAL_2

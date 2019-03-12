@@ -20,13 +20,13 @@ int algorithm::sgn(double value)
 }
 
 
-double algorithm::calcL(double I0)
+double algorithm::calcL(double I0, double U)
 {
 	return sgn(I0) * pow(U / fabs(I0), 1.0 / 3);
 }
 
 
-double algorithm::calcLowerPhi(double r, double L)
+double algorithm::calcLowerPhi(double r, double L, double A2)
 {
 	if (A2 == 0.0)
 	{
@@ -51,13 +51,15 @@ double algorithm::calcLowerPhi(double r, double L)
 }
 
 
-double algorithm::calcLowerGamma(double r0, double r1, double I1, double I2, double L)
+double algorithm::calcLowerGamma(double r0, double r1, double I1, double I2, double L, 
+								 double U, double B0, double A1, double ALPHA)
 {
 	return (2 / (r1 * r1 - r0 * r0)) * (r0 * cos(ALPHA) - r1 * sin(ALPHA) - (B0 * U) / (2 * M_PI * L) + (A1 * U * I2) / (I1 * L * L));
 }
 
 
-double algorithm::calcUpperPhi(double lowerGamma, double I1, double I2, double beta, double r, double z, double L)
+double algorithm::calcUpperPhi(double lowerGamma, double I1, double I2, double beta, double r, double z, double L, 
+							   double U, double B0, double A1, double A2)
 {
-	return B0 * z * L * L - (A1 * U * calcLowerPhi(r, L)) / (I1 * L * L) - sin(beta) / r + lowerGamma;
+	return B0 * z * L * L - (A1 * U * calcLowerPhi(r, L, A2)) / (I1 * L * L) - sin(beta) / r + lowerGamma;
 }

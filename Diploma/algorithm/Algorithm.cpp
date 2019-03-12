@@ -33,6 +33,13 @@ void algorithm::fillVariables(Variables *variables)
 
 		variables->beta[i] = -M_PI_4;
 	}
+
+	variables->L = 0;
+	variables->U = INITIAL_U;
+	variables->B0 = INITIAL_B0;
+	variables->A1 = INITIAL_A1;
+	variables->A2 = INITIAL_A2;
+	variables->ALPHA = INITIAL_ALPHA;
 }
 
 
@@ -42,11 +49,13 @@ void algorithm::calcBeta(Variables *variables)
 	double r1 = variables->r[N];
 
 	double I0 = calcIntegral0(variables);
-	double L = variables->L = calcL(I0);
+	double L = variables->L = calcL(I0, variables->U);
 	double I1 = calcIntegral1(variables);
 	double I2 = calcIntegral2(variables);
 
-	double lowerGamma = calcLowerGamma(r0, r1, I1, I2, L);
+	double lowerGamma = calcLowerGamma(r0, r1, I1, I2, L, 
+									   variables->U, variables->B0, 
+									   variables->A1, variables->ALPHA);
 
 #if LOG_BETA
 	std::cout << "r0: " << r0 << " r1: " << r1 << std::endl;
@@ -65,7 +74,8 @@ void algorithm::calcBeta(Variables *variables)
 		double tmpR = (variables->r[i] + variables->r[i + 1]) / 2;
 		double tmpBeta = (variables->beta[i] + variables->beta[i + 1]) / 2;
 
-		double upperPhi = calcUpperPhi(lowerGamma, I1, I2, tmpBeta, tmpR, tmpZ, L);
+		double upperPhi = calcUpperPhi(lowerGamma, I1, I2, tmpBeta, tmpR, tmpZ, L, 
+									   variables->U, variables->B0, variables->A1, variables->A2);
 
 #if SIMPLE_RELAXATION_FORMULA
 		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi;
@@ -144,7 +154,7 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables,
 
 	Variables resultVariables = variables;
 
-	while (A2 <= 1.6)
+	while (variables.A2 <= 1.6)
     {
         do
         {
@@ -172,18 +182,18 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables,
 		if (experimentsCounter % WRITE_SOLUTION_PARAM == 0)
 		{
 			currentIterationInfo.index = experimentsCounter;
-			currentIterationInfo.u = U;
-			currentIterationInfo.b0 = B0;
-			currentIterationInfo.a1 = A1;
-			currentIterationInfo.a2 = A2;
-			currentIterationInfo.alpha = ALPHA;
+			currentIterationInfo.u = variables.U;
+			currentIterationInfo.b0 = variables.B0;
+			currentIterationInfo.a1 = variables.A1;
+			currentIterationInfo.a2 = variables.A2;
+			currentIterationInfo.alpha = variables.ALPHA;
 
 			iterationsInfo.push_back(currentIterationInfo);
 		}
 
 		experimentsCounter++;
 
-        A2 += 0.05;
+		variables.A2 += 0.05;
 	}
 
 #if LOG_RESULTS
