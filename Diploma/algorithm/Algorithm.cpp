@@ -136,16 +136,16 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables,
 
 	double residual;
 	long long iterationsCounter = 0;
-	long long experiementsCounter = 0;
+	long long experimentsCounter = 0;
 	IterationInfo currentIterationInfo;
 
 	std::vector<double> prevR;
 	std::vector<double> prevZ;
 
+	Variables resultVariables = variables;
+
 	while (A2 <= 1.6)
     {
-        std::cout << A2 << std::endl;
-
         do
         {
             prevR = variables.r;
@@ -160,11 +160,18 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables,
         }
         while (residual > ACCURACY);
 
-		experimentVariables.push_back(variables);
-
-		if (experiementsCounter % WRITE_SOLUTION_PARAM == 0)
+        resultVariables = variables;
+		for (int i = 0; i < variables.r.size(); i++)
 		{
-			currentIterationInfo.index = experiementsCounter;
+			resultVariables.r[i] *= resultVariables.L;
+			resultVariables.z[i] *= resultVariables.L;
+		}
+
+		experimentVariables.push_back(resultVariables);
+
+		if (experimentsCounter % WRITE_SOLUTION_PARAM == 0)
+		{
+			currentIterationInfo.index = experimentsCounter;
 			currentIterationInfo.u = U;
 			currentIterationInfo.b0 = B0;
 			currentIterationInfo.a1 = A1;
@@ -174,7 +181,7 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables,
 			iterationsInfo.push_back(currentIterationInfo);
 		}
 
-		experiementsCounter++;
+		experimentsCounter++;
 
         A2 += 0.05;
 	}

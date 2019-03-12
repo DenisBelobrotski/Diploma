@@ -43,7 +43,7 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iteration
 
 	for (int i = 0; i < iterationsInfo.size(); i++)
 	{
-		int currentIteration = iterationsInfo[i].index;
+		long long currentIteration = iterationsInfo[i].index;
 
 		std::vector<plot::Point> points;
 		plot::convertComponentsVectorsToPointsVector(iterationVariables[currentIteration].r,

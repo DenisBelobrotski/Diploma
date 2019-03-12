@@ -43,7 +43,7 @@ namespace algorithm
 
 	struct IterationInfo
 	{
-		double index;
+		long long index;
 		double u;
 		double b0;
 		double a1;
