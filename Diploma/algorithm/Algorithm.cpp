@@ -18,6 +18,30 @@ namespace algorithm
 	void calcHeight(Variables *variables);
 
 	void calcIteration(Variables *variables);
+
+	void runIterationProcess(Variables &variables, long long &iterationsCounter);
+
+	void changeParameter(Variables &variables, double &parameter, double target, double step,
+                         long long &iterationsCounter, long long &experimentsCounter,
+                         std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo);
+
+	void increaseParameter(Variables &variables, double &parameter, double target, double step,
+                           long long &iterationsCounter, long long &experimentsCounter,
+                           std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo);
+
+	void decreaseParameter(Variables &variables, double &parameter, double target, double step,
+                           long long &iterationsCounter, long long &experimentsCounter,
+                           std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo);
+
+    void runExperiment(Variables &variables, long long &iterationsCounter, long long &experimentsCounter,
+                       std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                       bool isLastExperiment);
+
+	void pushExperimentResults(long long &experimentsCounter, Variables &variables,
+	                           std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                               bool isLastExperiment);
+
+    void convertToRadiusDimensionedVariables(Variables &variables);
 }
 
 
@@ -133,6 +157,129 @@ void algorithm::calcIteration(Variables *variables)
 }
 
 
+void algorithm::runIterationProcess(Variables &variables, long long &iterationsCounter)
+{
+    double residual;
+
+    std::vector<double> prevR;
+    std::vector<double> prevZ;
+
+    do
+    {
+        prevR = variables.r;
+        prevZ = variables.z;
+
+        calcIteration(&variables);
+
+        residual = std::max(utils::calcResidual(prevR, variables.r),
+                            utils::calcResidual(prevZ, variables.z));
+
+        iterationsCounter++;
+    }
+    while (residual > ACCURACY);
+}
+
+
+void algorithm::changeParameter(Variables &variables, double &parameter, double target, double step,
+                                long long &iterationsCounter, long long &experimentsCounter,
+                                std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo)
+{
+    if (target > parameter)
+    {
+        increaseParameter(variables, parameter, target, step, iterationsCounter,
+                          experimentsCounter, experimentVariables, iterationsInfo);
+    }
+    else if (target < parameter)
+    {
+        decreaseParameter(variables, parameter, target, step, iterationsCounter,
+                          experimentsCounter, experimentVariables, iterationsInfo);
+    }
+}
+
+void algorithm::increaseParameter(Variables &variables, double &parameter, double target, double step,
+                                  long long &iterationsCounter, long long &experimentsCounter,
+                                  std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo)
+{
+    bool isLastExperiment = false;
+
+    while (parameter <= target + step / 2)
+    {
+        if (parameter >= target)
+        {
+            isLastExperiment = true;
+        }
+        runExperiment(variables, iterationsCounter, experimentsCounter, experimentVariables, iterationsInfo, isLastExperiment);
+
+        parameter += step;
+    }
+}
+
+void algorithm::decreaseParameter(Variables &variables, double &parameter, double target, double step,
+                                  long long &iterationsCounter, long long &experimentsCounter,
+                                  std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo)
+{
+    bool isLastExperiment = false;
+
+    while (parameter >= target - step / 2)
+    {
+        if (parameter <= target)
+        {
+            isLastExperiment = true;
+        }
+        runExperiment(variables, iterationsCounter, experimentsCounter, experimentVariables, iterationsInfo, isLastExperiment);
+
+        parameter -= step;
+    }
+}
+
+
+void algorithm::runExperiment(Variables &variables, long long &iterationsCounter, long long &experimentsCounter,
+                              std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                              bool isLastExperiment)
+{
+    runIterationProcess(variables, iterationsCounter);
+
+    pushExperimentResults(experimentsCounter, variables, experimentVariables, iterationsInfo, isLastExperiment);
+
+    experimentsCounter++;
+}
+
+
+void algorithm::pushExperimentResults(long long &experimentsCounter, Variables &variables,
+                            std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                            bool isLastExperiment)
+{
+    IterationInfo currentIterationInfo;
+    Variables resultVariables = variables;
+
+    convertToRadiusDimensionedVariables(resultVariables);
+
+    experimentVariables.push_back(resultVariables);
+
+    if (experimentsCounter % WRITE_SOLUTION_PARAM == 0 || isLastExperiment)
+    {
+        currentIterationInfo.index = experimentsCounter;
+        currentIterationInfo.u = variables.U;
+        currentIterationInfo.b0 = variables.B0;
+        currentIterationInfo.a1 = variables.A1;
+        currentIterationInfo.a2 = variables.A2;
+        currentIterationInfo.alpha = variables.ALPHA;
+
+        iterationsInfo.push_back(currentIterationInfo);
+    }
+}
+
+
+void algorithm::convertToRadiusDimensionedVariables(Variables &variables)
+{
+    for (int i = 0; i < variables.r.size(); i++)
+    {
+        variables.r[i] *= variables.L;
+        variables.z[i] *= variables.L;
+    }
+}
+
+
 void algorithm::calcResult(std::vector<Variables> &experimentVariables, 
 						   std::vector<IterationInfo> &iterationsInfo)
 {
@@ -144,57 +291,20 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables,
 
 	fillVariables(&variables);
 
-	double residual;
+
 	long long iterationsCounter = 0;
 	long long experimentsCounter = 0;
-	IterationInfo currentIterationInfo;
 
-	std::vector<double> prevR;
-	std::vector<double> prevZ;
 
-	Variables resultVariables = variables;
+    changeParameter(variables, variables.A2, 1.55, 0.05, iterationsCounter,
+                    experimentsCounter, experimentVariables, iterationsInfo);
 
-	while (variables.A2 <= 1.6)
-    {
-        do
-        {
-            prevR = variables.r;
-            prevZ = variables.z;
+//    changeParameter(variables, variables.A1, 6.0, 1.0, iterationsCounter,
+//                    experimentsCounter, experimentVariables, iterationsInfo);
+//
+//    changeParameter(variables, variables.A2, 3.0, 0.05, iterationsCounter,
+//                    experimentsCounter, experimentVariables, iterationsInfo);
 
-            calcIteration(&variables);
-
-            residual = std::max(utils::calcResidual(prevR, variables.r),
-                    utils::calcResidual(prevZ, variables.z));
-
-            iterationsCounter++;
-        }
-        while (residual > ACCURACY);
-
-        resultVariables = variables;
-		for (int i = 0; i < variables.r.size(); i++)
-		{
-			resultVariables.r[i] *= resultVariables.L;
-			resultVariables.z[i] *= resultVariables.L;
-		}
-
-		experimentVariables.push_back(resultVariables);
-
-		if (experimentsCounter % WRITE_SOLUTION_PARAM == 0)
-		{
-			currentIterationInfo.index = experimentsCounter;
-			currentIterationInfo.u = variables.U;
-			currentIterationInfo.b0 = variables.B0;
-			currentIterationInfo.a1 = variables.A1;
-			currentIterationInfo.a2 = variables.A2;
-			currentIterationInfo.alpha = variables.ALPHA;
-
-			iterationsInfo.push_back(currentIterationInfo);
-		}
-
-		experimentsCounter++;
-
-		variables.A2 += 0.05;
-	}
 
 #if LOG_RESULTS
 	utils::printVector(&std::cout, &(variables.s));
@@ -209,4 +319,5 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables,
 
 
 	std::cout << "iterations count: " << iterationsCounter << std::endl;
+    std::cout << "experiments count: " << experimentsCounter << std::endl;
 }
