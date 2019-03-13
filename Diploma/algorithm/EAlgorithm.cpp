@@ -139,5 +139,5 @@ void algorithm::e::runIterationProcess(Variables &variables, long long &iteratio
 			utils::calcResidual(prevZ, variables.z));
 
 		iterationsCounter++;
-	} while (residual > algorithm::ACCURACY);
+	} while (residual > ACCURACY);
 }

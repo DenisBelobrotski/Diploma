@@ -9,10 +9,12 @@
 #include "plot/Utils.h"
 #include "algorithm/Algorithm.h"
 #include "algorithm/EAlgorithm.h"
+#include "algorithm/DSAlgorithm.h"
 
 
 plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iterationVariables, 
-									std::vector<algorithm::IterationInfo> &iterationsInfo);
+									std::vector<algorithm::IterationInfo> &iterationsInfo,
+									std::string title);
 
 plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> &iterationVariables, 
 							 std::vector<algorithm::IterationInfo> &iterationsInfo);
@@ -20,25 +22,33 @@ plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> &iterationVariabl
 
 int main()
 {
-	std::vector<algorithm::Variables> experimentVariables;
+	std::vector<algorithm::Variables> newExperimentVariables;
+	std::vector<algorithm::Variables> oldExperimentVariables;
 
-	std::vector<algorithm::IterationInfo> iterationsInfo;
+	std::vector<algorithm::IterationInfo> newIterationsInfo;
+	std::vector<algorithm::IterationInfo> oldIterationsInfo;
 
-	algorithm::calcResult(algorithm::e::runIterationProcess, experimentVariables, iterationsInfo);
+	algorithm::calcResult(algorithm::e::runIterationProcess, newExperimentVariables, newIterationsInfo);
+	algorithm::calcResult(algorithm::ds::runIterationProcess, oldExperimentVariables, oldIterationsInfo);
 
-	plot::Plot *magneticFluidPlot = configMagneticFluidPlot(experimentVariables, iterationsInfo);
-	magneticFluidPlot->makeGraphs();
+	plot::Plot *newMagneticFluidPlot = configMagneticFluidPlot(newExperimentVariables, newIterationsInfo, "New algorithm");
+	newMagneticFluidPlot->makeGraphs();
+
+	plot::Plot *oldMagneticFluidPlot = configMagneticFluidPlot(oldExperimentVariables, oldIterationsInfo, "Old algorithm");
+	oldMagneticFluidPlot->makeGraphs();
 
 	utils::pauseExecution();
 
-	delete magneticFluidPlot;
+	delete newMagneticFluidPlot;
+	delete oldMagneticFluidPlot;
 
 	return 0;
 }
 
 
 plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iterationVariables, 
-									std::vector<algorithm::IterationInfo> &iterationsInfo)
+									std::vector<algorithm::IterationInfo> &iterationsInfo,
+									std::string title)
 {
 	auto graphs = new std::vector<plot::Graph>();
 
@@ -69,7 +79,7 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iteration
 	auto config = new plot::PlotConfig();
 	config->windowWidth = 1600;
 	config->windowHeight = 900;
-	config->title = "Magnetic fluid";
+	config->title = title;
 	config->xAxisName = "Radius";
 	config->yAxisName = "Height";
 	config->legendFontSize = 0;
