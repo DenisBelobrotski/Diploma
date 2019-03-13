@@ -8,6 +8,7 @@
 #include "plot/Plot.h"
 #include "plot/Utils.h"
 #include "algorithm/Algorithm.h"
+#include "algorithm/EAlgorithm.h"
 
 
 plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iterationVariables, 
@@ -23,7 +24,7 @@ int main()
 
 	std::vector<algorithm::IterationInfo> iterationsInfo;
 
-	algorithm::calcResult(experimentVariables, iterationsInfo);
+	algorithm::calcResult(algorithm::e::runIterationProcess, experimentVariables, iterationsInfo);
 
 	plot::Plot *magneticFluidPlot = configMagneticFluidPlot(experimentVariables, iterationsInfo);
 	magneticFluidPlot->makeGraphs();

@@ -8,10 +8,7 @@
 #include <math.h>
 
 
-#define LOG_BETA 0
 #define LOG_RESULTS 0
-
-#define SIMPLE_RELAXATION_FORMULA 1
 
 
 namespace algorithm
@@ -56,6 +53,7 @@ namespace algorithm
 		double alpha;
 	};
 
-	void calcResult(std::vector<Variables> &experimentVariables, 
+	void calcResult(void(*runIterationProcess) (Variables &, long long &), 
+					std::vector<Variables> &experimentVariables,
 					std::vector<IterationInfo> &iterationsInfo);
 }

@@ -7,11 +7,11 @@
 
 namespace algorithm
 {
-	bool isCorrectMatrix(std::vector<std::vector<double>> &matrix, size_t dimension);
+	bool isCorrectMatrix(std::vector<std::vector<double>> &matrix, const size_t dimension);
 
-	void calcAlpha(std::vector<std::vector<double>> &matrix, size_t dimension, std::vector<double> &alpha);
+	void calcRightSweepAlpha(std::vector<std::vector<double>> &matrix, const size_t dimension, std::vector<double> &alpha);
 
-	void calcBeta(std::vector<std::vector<double>> &matrix, std::vector<double> &freeMembers,
+	void calcRightSweepBeta(std::vector<std::vector<double>> &matrix, std::vector<double> &freeMembers,
 		std::vector<double> &alpha, std::vector<double> &beta);
 
 	void reversal(std::vector<double> &alpha, std::vector<double> &beta, std::vector<double> &result);
@@ -22,19 +22,19 @@ void algorithm::calcRightSweep(std::vector<std::vector<double>> &matrix,
 							   std::vector<double> &freeMembers, 
 							   std::vector<double> &result)
 {
-	auto dimension = freeMembers.size();
+	const auto dimension = freeMembers.size();
 	if (!isCorrectMatrix(matrix, dimension))
 	{
 		std::cerr << "Incorrect matrix (right sweep)" << std::endl;
 	}
 	std::vector<double> alpha(dimension - 1);
 	std::vector<double> beta(dimension);
-	calcAlpha(matrix, dimension, alpha);
-	calcBeta(matrix, freeMembers, alpha, beta);
+	calcRightSweepAlpha(matrix, dimension, alpha);
+	calcRightSweepBeta(matrix, freeMembers, alpha, beta);
 	reversal(alpha, beta, result);
 }
 
-bool algorithm::isCorrectMatrix(std::vector<std::vector<double>> &matrix, size_t dimension)
+bool algorithm::isCorrectMatrix(std::vector<std::vector<double>> &matrix, const size_t dimension)
 {
 	if (fabs(matrix[0][0]) < fabs(matrix[0][1]))
 	{
@@ -57,7 +57,7 @@ bool algorithm::isCorrectMatrix(std::vector<std::vector<double>> &matrix, size_t
 	return true;
 }
 
-void algorithm::calcAlpha(std::vector<std::vector<double>> &matrix, size_t dimension, std::vector<double> &alpha)
+void algorithm::calcRightSweepAlpha(std::vector<std::vector<double>> &matrix, const size_t dimension, std::vector<double> &alpha)
 {
 	alpha[0] = -matrix[0][1] / matrix[0][0];
 	for (auto i = 1; i < dimension - 1; i++) 
@@ -66,10 +66,10 @@ void algorithm::calcAlpha(std::vector<std::vector<double>> &matrix, size_t dimen
 	}
 }
 
-void algorithm::calcBeta(std::vector<std::vector<double>> &matrix, std::vector<double> &freeMembers,
+void algorithm::calcRightSweepBeta(std::vector<std::vector<double>> &matrix, std::vector<double> &freeMembers,
 			  std::vector<double> &alpha, std::vector<double> &beta)
 {
-	auto dimension = freeMembers.size();
+	const auto dimension = freeMembers.size();
 	beta[0] = freeMembers[0] / matrix[0][0];
 	for (auto i = 1; i < dimension; i++) 
 	{
@@ -81,7 +81,7 @@ void algorithm::calcBeta(std::vector<std::vector<double>> &matrix, std::vector<d
 
 void algorithm::reversal(std::vector<double> &alpha, std::vector<double> &beta, std::vector<double> &result)
 {
-	auto dimension = beta.size();
+	const auto dimension = beta.size();
 	result[dimension - 1] = beta[dimension - 1];
 	for (long long i = dimension - 2; i >= 0; i--) 
 	{
