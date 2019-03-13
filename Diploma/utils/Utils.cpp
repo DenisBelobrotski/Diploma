@@ -6,11 +6,11 @@
 #include <algorithm>
 #include <sstream>
 
-void utils::printVector(std::ostream *os, std::vector<double> *vector)
+void utils::printVector(std::ostream &os, std::vector<double> &vector)
 {
-	for (const auto& currentComponent : *vector)
+	for (const auto& currentComponent : vector)
 	{
-		*os << currentComponent << std::endl;
+		os << currentComponent << std::endl;
 	}
 }
 

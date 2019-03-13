@@ -51,6 +51,7 @@ namespace plot
         std::string title;
         std::string xAxisName;
         std::string yAxisName;
+		int legendFontSize;
 		Range xAxisRange;
 		Range yAxisRange;
 		bool equalAxes;

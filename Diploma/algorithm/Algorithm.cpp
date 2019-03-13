@@ -82,7 +82,7 @@ void algorithm::calcBeta(Variables *variables)
 
 	if (r0 != r0 || r1 != r1 || I0 != I0 || L != L || I1 != I1 || I2 != I2)
 	{
-		std::cout << "r0 || r1 || I0 || L || I1 || I2 is nan" << std::endl;
+		std::cerr << "r0 || r1 || I0 || L || I1 || I2 is nan" << std::endl;
 		utils::pauseExecution();
 	}
 
@@ -114,7 +114,7 @@ void algorithm::calcBeta(Variables *variables)
 		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi;
 		if (variables->beta[i] != variables->beta[i])
 		{
-			std::cout << "beta is nan" << std::endl;
+			std::cerr << "beta is nan" << std::endl;
 			utils::pauseExecution();
 		}
 #else
@@ -224,6 +224,11 @@ void algorithm::increaseParameter(Variables &variables, double &parameter, doubl
         runExperiment(variables, iterationsCounter, experimentsCounter, experimentVariables, iterationsInfo,
         		                 isLastExperiment, drawRate);
 
+		if (isLastExperiment)
+		{
+			break;
+		}
+
         parameter += step;
 
 		if (parameter >= target - halfStep)
@@ -245,6 +250,11 @@ void algorithm::decreaseParameter(Variables &variables, double &parameter, doubl
     {
         runExperiment(variables, iterationsCounter, experimentsCounter, experimentVariables, iterationsInfo,
         		      isLastExperiment, drawRate);
+
+		if (isLastExperiment)
+		{
+			break;
+		}
 
         parameter -= step;
 
@@ -279,7 +289,7 @@ void algorithm::pushExperimentResults(long long &experimentsCounter, Variables &
 
     experimentVariables.push_back(resultVariables);
 
-    if (experimentsCounter % drawRate == 0 || isLastExperiment)
+    if (drawRate > 0 && experimentsCounter % drawRate == 0 || isLastExperiment)
     {
         currentIterationInfo.index = experimentsCounter;
         currentIterationInfo.u = variables.U;
@@ -314,32 +324,35 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables,
 
 	fillVariables(&variables);
 
-
 	long long iterationsCounter = 0;
 	long long experimentsCounter = 0;
 
+	changeParameter(variables, variables.A2, 0.1, 0.05, iterationsCounter,
+		experimentsCounter, experimentVariables, iterationsInfo, -1);
+    
+    changeParameter(variables, variables.A1, 6.0, 1.0, iterationsCounter,
+                    experimentsCounter, experimentVariables, iterationsInfo, -1);
 
-    changeParameter(variables, variables.A2, 1.55, 0.05, iterationsCounter,
-                    experimentsCounter, experimentVariables, iterationsInfo, 20);
+	changeParameter(variables, variables.A2, 1.5, 0.05, iterationsCounter,
+	                experimentsCounter, experimentVariables, iterationsInfo, -1);
 
-    changeParameter(variables, variables.A1, 6.0, 1, iterationsCounter,
-                    experimentsCounter, experimentVariables, iterationsInfo, 20);
+	 changeParameter(variables, variables.A2, 3.0, 0.05, iterationsCounter,
+	                 experimentsCounter, experimentVariables, iterationsInfo, -1);
+ 
+	changeParameter(variables, variables.A2, 6.0, 0.05, iterationsCounter,
+		experimentsCounter, experimentVariables, iterationsInfo, -1);
 
-    changeParameter(variables, variables.A2, 3.0, 0.05, iterationsCounter,
-                    experimentsCounter, experimentVariables, iterationsInfo, 20);
-
-	changeParameter(variables, variables.U, 100.0, 10.0, iterationsCounter,
-					experimentsCounter, experimentVariables, iterationsInfo, 20);
-
+	// changeParameter(variables, variables.U, 100.0, 10.0, iterationsCounter,
+	// 				experimentsCounter, experimentVariables, iterationsInfo, 20);
 
 #if LOG_RESULTS
-	utils::printVector(&std::cout, &(variables.s));
+	utils::printVector(std::cout, variables.s);
 	std::cout << "************************" << std::endl;
-	utils::printVector(&std::cout, &(variables.r));
+	utils::printVector(std::cout, variables.r);
 	std::cout << "************************" << std::endl;
-	utils::printVector(&std::cout, &(variables.z));
+	utils::printVector(std::cout, variables.z);
 	std::cout << "************************" << std::endl;
-	utils::printVector(&std::cout, &(variables.beta));
+	utils::printVector(std::cout, variables.beta);
 	std::cout << "************************" << std::endl;
 #endif
 

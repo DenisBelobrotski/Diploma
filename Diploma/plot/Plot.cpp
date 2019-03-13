@@ -48,9 +48,14 @@ void plot::Plot::configPlot()
 #else
 	fprintf(pipe, "set term qt size %d, %d\n", config->windowWidth, config->windowHeight);
 #endif
+	
 	fprintf(pipe, "set title \"%s\"\n", config->title.c_str());
 	fprintf(pipe, "set xlabel \"%s\"\n", config->xAxisName.c_str());
 	fprintf(pipe, "set ylabel \"%s\"\n", config->yAxisName.c_str());
+	if (config->legendFontSize > 0)
+	{
+		fprintf(pipe, "set key font \", %d\"\n", config->legendFontSize);
+	}
 
 	Range xAxisRange = config->xAxisRange;
 	Range yAxisRange = config->yAxisRange;
