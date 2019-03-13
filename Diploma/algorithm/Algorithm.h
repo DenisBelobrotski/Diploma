@@ -22,7 +22,7 @@ namespace algorithm
 	const double STEP = (UPPER_BOUND - LOWER_BOUND) / N;
 	const double TAU = 0.1;
 	const double ACCURACY = 1E-5;
-	const int WRITE_SOLUTION_PARAM = 10;
+	const int WRITE_SOLUTION_PARAM = 20;
 
 	const double INITIAL_U = 3; //400
     const double INITIAL_B0 = 1; //1

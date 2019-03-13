@@ -23,23 +23,26 @@ namespace algorithm
 
 	void changeParameter(Variables &variables, double &parameter, double target, double step,
                          long long &iterationsCounter, long long &experimentsCounter,
-                         std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo);
+                         std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                         long long drawRate);
 
 	void increaseParameter(Variables &variables, double &parameter, double target, double step,
                            long long &iterationsCounter, long long &experimentsCounter,
-                           std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo);
+                           std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                           long long drawRate);
 
 	void decreaseParameter(Variables &variables, double &parameter, double target, double step,
                            long long &iterationsCounter, long long &experimentsCounter,
-                           std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo);
+                           std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                           long long drawRate);
 
     void runExperiment(Variables &variables, long long &iterationsCounter, long long &experimentsCounter,
                        std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                       bool isLastExperiment);
+                       bool isLastExperiment, long long drawRate);
 
 	void pushExperimentResults(long long &experimentsCounter, Variables &variables,
 	                           std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                               bool isLastExperiment);
+                               bool isLastExperiment, long long drawRate);
 
     void convertToRadiusDimensionedVariables(Variables &variables);
 }
@@ -77,6 +80,12 @@ void algorithm::calcBeta(Variables *variables)
 	double I1 = calcIntegral1(variables);
 	double I2 = calcIntegral2(variables);
 
+	if (r0 != r0 || r1 != r1 || I0 != I0 || L != L || I1 != I1 || I2 != I2)
+	{
+		std::cout << "r0 || r1 || I0 || L || I1 || I2 is nan" << std::endl;
+		utils::pauseExecution();
+	}
+
 	double lowerGamma = calcLowerGamma(r0, r1, I1, I2, L, 
 									   variables->U, variables->B0, 
 									   variables->A1, variables->ALPHA);
@@ -103,6 +112,11 @@ void algorithm::calcBeta(Variables *variables)
 
 #if SIMPLE_RELAXATION_FORMULA
 		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi;
+		if (variables->beta[i] != variables->beta[i])
+		{
+			std::cout << "beta is nan" << std::endl;
+			utils::pauseExecution();
+		}
 #else
 		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi +
 			(1 - TAU) * (variables->beta[i] - variables->beta[i + 1] + STEP * upperPhi);
@@ -182,64 +196,73 @@ void algorithm::runIterationProcess(Variables &variables, long long &iterationsC
 
 void algorithm::changeParameter(Variables &variables, double &parameter, double target, double step,
                                 long long &iterationsCounter, long long &experimentsCounter,
-                                std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo)
+                                std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                                long long drawRate)
 {
     if (target > parameter)
     {
         increaseParameter(variables, parameter, target, step, iterationsCounter,
-                          experimentsCounter, experimentVariables, iterationsInfo);
+                          experimentsCounter, experimentVariables, iterationsInfo, drawRate);
     }
     else if (target < parameter)
     {
         decreaseParameter(variables, parameter, target, step, iterationsCounter,
-                          experimentsCounter, experimentVariables, iterationsInfo);
+                          experimentsCounter, experimentVariables, iterationsInfo, drawRate);
     }
 }
 
 void algorithm::increaseParameter(Variables &variables, double &parameter, double target, double step,
                                   long long &iterationsCounter, long long &experimentsCounter,
-                                  std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo)
+                                  std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                                  long long drawRate)
 {
     bool isLastExperiment = false;
+    const double halfStep = step / 2;
 
-    while (parameter <= target + step / 2)
+    while (parameter <= target)
     {
-        if (parameter >= target)
-        {
-            isLastExperiment = true;
-        }
-        runExperiment(variables, iterationsCounter, experimentsCounter, experimentVariables, iterationsInfo, isLastExperiment);
+        runExperiment(variables, iterationsCounter, experimentsCounter, experimentVariables, iterationsInfo,
+        		                 isLastExperiment, drawRate);
 
         parameter += step;
+
+		if (parameter >= target - halfStep)
+		{
+			isLastExperiment = true;
+		}
     }
 }
 
 void algorithm::decreaseParameter(Variables &variables, double &parameter, double target, double step,
                                   long long &iterationsCounter, long long &experimentsCounter,
-                                  std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo)
+                                  std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
+                                  long long drawRate)
 {
     bool isLastExperiment = false;
+	const double halfStep = step / 2;
 
-    while (parameter >= target - step / 2)
+    while (parameter >= target)
     {
-        if (parameter <= target)
-        {
-            isLastExperiment = true;
-        }
-        runExperiment(variables, iterationsCounter, experimentsCounter, experimentVariables, iterationsInfo, isLastExperiment);
+        runExperiment(variables, iterationsCounter, experimentsCounter, experimentVariables, iterationsInfo,
+        		      isLastExperiment, drawRate);
 
         parameter -= step;
+
+		if (parameter <= target + halfStep)
+		{
+			isLastExperiment = true;
+		}
     }
 }
 
 
 void algorithm::runExperiment(Variables &variables, long long &iterationsCounter, long long &experimentsCounter,
                               std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                              bool isLastExperiment)
+                              bool isLastExperiment, long long drawRate)
 {
     runIterationProcess(variables, iterationsCounter);
 
-    pushExperimentResults(experimentsCounter, variables, experimentVariables, iterationsInfo, isLastExperiment);
+    pushExperimentResults(experimentsCounter, variables, experimentVariables, iterationsInfo, isLastExperiment, drawRate);
 
     experimentsCounter++;
 }
@@ -247,7 +270,7 @@ void algorithm::runExperiment(Variables &variables, long long &iterationsCounter
 
 void algorithm::pushExperimentResults(long long &experimentsCounter, Variables &variables,
                             std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                            bool isLastExperiment)
+                            bool isLastExperiment, long long drawRate)
 {
     IterationInfo currentIterationInfo;
     Variables resultVariables = variables;
@@ -256,7 +279,7 @@ void algorithm::pushExperimentResults(long long &experimentsCounter, Variables &
 
     experimentVariables.push_back(resultVariables);
 
-    if (experimentsCounter % WRITE_SOLUTION_PARAM == 0 || isLastExperiment)
+    if (experimentsCounter % drawRate == 0 || isLastExperiment)
     {
         currentIterationInfo.index = experimentsCounter;
         currentIterationInfo.u = variables.U;
@@ -297,13 +320,16 @@ void algorithm::calcResult(std::vector<Variables> &experimentVariables,
 
 
     changeParameter(variables, variables.A2, 1.55, 0.05, iterationsCounter,
-                    experimentsCounter, experimentVariables, iterationsInfo);
+                    experimentsCounter, experimentVariables, iterationsInfo, 20);
 
-//    changeParameter(variables, variables.A1, 6.0, 1.0, iterationsCounter,
-//                    experimentsCounter, experimentVariables, iterationsInfo);
-//
-//    changeParameter(variables, variables.A2, 3.0, 0.05, iterationsCounter,
-//                    experimentsCounter, experimentVariables, iterationsInfo);
+    changeParameter(variables, variables.A1, 6.0, 1, iterationsCounter,
+                    experimentsCounter, experimentVariables, iterationsInfo, 20);
+
+    changeParameter(variables, variables.A2, 3.0, 0.05, iterationsCounter,
+                    experimentsCounter, experimentVariables, iterationsInfo, 20);
+
+	changeParameter(variables, variables.U, 100.0, 10.0, iterationsCounter,
+					experimentsCounter, experimentVariables, iterationsInfo, 20);
 
 
 #if LOG_RESULTS

@@ -71,8 +71,8 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iteration
 	config->yAxisName = "Height";
 	config->windowWidth = 1280;
 	config->windowHeight = 720;
-	config->xAxisRange = plot::Range(1, 3);
-	config->yAxisRange = plot::Range(0, 3);
+	config->xAxisRange = plot::Range(1, 4);
+	config->yAxisRange = plot::Range(0, 5);
 	config->equalAxes = true;
 
 	auto plot = new plot::Plot(config, graphs);
