@@ -17,3 +17,13 @@ namespace algorithm::e
 
 	double calcIntegral2(Variables *variables);
 }
+
+
+namespace algorithm::ds
+{
+	double calcIntegral0(Variables *variables);
+
+	double calcIntegral1(Variables *variables);
+
+	double calcIntegral2(Variables *variables);
+}
