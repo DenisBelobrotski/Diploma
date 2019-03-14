@@ -9,7 +9,7 @@
 #define LOG_INTEGRAL_2 0
 
 
-namespace algorithm
+namespace algorithm::e
 {
 	double calcIntegral0(Variables *variables);
 

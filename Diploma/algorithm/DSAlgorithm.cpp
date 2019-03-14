@@ -24,6 +24,69 @@ namespace algorithm::ds
 	double calcLowerPhi(int i, Variables *variables);
 
 	double calcLowerGamma(Variables *variables, double I1, double I2);
+
+	double calcIntegral0(Variables *variables);
+
+	double calcIntegral1(Variables *variables);
+
+	double calcIntegral2(Variables *variables);
+}
+
+
+double algorithm::ds::calcIntegral0(Variables *variables)
+{
+	double sum = 0;
+
+	for (auto i = 1; i < N + 1; i++)
+	{
+		double height = (variables->z[i] + variables->z[i - 1]) / 2;
+		double radiusQuadDiff = variables->r[i] * variables->r[i] -
+								variables->r[i - 1] * variables->r[i - 1];
+
+		sum += height * radiusQuadDiff;
+	}
+
+	return M_PI * sum;
+}
+
+double algorithm::ds::calcIntegral1(Variables *variables)
+{
+	double sum = 0;
+
+	for (auto i = 1; i < N + 1; i++)
+	{
+		double height = (variables->z[i] + variables->z[i - 1]) / 2;
+		double radius = (variables->r[i] + variables->r[i - 1]) / 2;
+		double radiusQuadDiff = variables->r[i] * variables->r[i] -
+								variables->r[i - 1] * variables->r[i - 1];		
+		
+		//TODO: call calcLowerPhi
+		double tmp = variables->L * radius / variables->A2;
+		double phi = tmp * sinh(1 / tmp);
+
+		sum += height * radiusQuadDiff * phi;
+	}
+
+	return M_PI * sum;
+}
+
+double algorithm::ds::calcIntegral2(Variables *variables)
+{
+	double sum = 0;
+
+	for (auto i = 1; i < N + 1; i++)
+	{
+		double radius = (variables->r[i] + variables->r[i - 1]) / 2;
+		double radiusQuadDiff = variables->r[i] * variables->r[i] -
+			variables->r[i - 1] * variables->r[i - 1];
+		double tmp = variables->L * radius / variables->A2;
+
+		//TODO: call calcLowerPhi
+		double phi = tmp * sinh(1 / tmp);
+		sum += radiusQuadDiff * phi;
+	}
+
+	return sum / 2;
 }
 
 

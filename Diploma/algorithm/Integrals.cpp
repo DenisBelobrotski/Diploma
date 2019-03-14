@@ -3,7 +3,7 @@
 #include <iostream>
 
 
-double algorithm::calcIntegral0(Variables *variables)
+double algorithm::e::calcIntegral0(Variables *variables)
 {
 	double result = 0;
 
@@ -38,7 +38,7 @@ double algorithm::calcIntegral0(Variables *variables)
 }
 
 
-double algorithm::calcIntegral1(Variables *variables)
+double algorithm::e::calcIntegral1(Variables *variables)
 {
 	double result = 0;
 
@@ -74,7 +74,7 @@ double algorithm::calcIntegral1(Variables *variables)
 }
 
 
-double algorithm::calcIntegral2(Variables *variables)
+double algorithm::e::calcIntegral2(Variables *variables)
 {
 	double result = 0;
 
