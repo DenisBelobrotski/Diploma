@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 #include "Diploma.h"
 #include "utils/Utils.h"
 #include "plot/Plot.h"
@@ -22,20 +23,44 @@ plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> &iterationVariabl
 
 int main()
 {
-	std::vector<algorithm::Variables> newExperimentVariables;
 	std::vector<algorithm::Variables> oldExperimentVariables;
+	std::vector<algorithm::Variables> newExperimentVariables;
 
-	std::vector<algorithm::IterationInfo> newIterationsInfo;
 	std::vector<algorithm::IterationInfo> oldIterationsInfo;
+	std::vector<algorithm::IterationInfo> newIterationsInfo;
 
-	algorithm::calcResult(algorithm::e::runIterationProcess, newExperimentVariables, newIterationsInfo);
+	std::cout << "*****Algorithms info*****" << std::endl;
+
+	std::cout << "Difference scheme: " << std::endl;
 	algorithm::calcResult(algorithm::ds::runIterationProcess, oldExperimentVariables, oldIterationsInfo);
+
+	std::cout << "Angles: " << std::endl;
+	algorithm::calcResult(algorithm::e::runIterationProcess, newExperimentVariables, newIterationsInfo);
+
+	plot::Plot *oldMagneticFluidPlot = configMagneticFluidPlot(oldExperimentVariables, oldIterationsInfo, "Old algorithm");
+	oldMagneticFluidPlot->makeGraphs();
 
 	plot::Plot *newMagneticFluidPlot = configMagneticFluidPlot(newExperimentVariables, newIterationsInfo, "New algorithm");
 	newMagneticFluidPlot->makeGraphs();
 
-	plot::Plot *oldMagneticFluidPlot = configMagneticFluidPlot(oldExperimentVariables, oldIterationsInfo, "Old algorithm");
-	oldMagneticFluidPlot->makeGraphs();
+	std::cout << "*****Residuals*****" << std::endl;
+	auto size = std::min(newIterationsInfo.size(), oldIterationsInfo.size());
+	for (int i = 0; i < size; i++)
+	{
+		auto currentOldIteration = oldIterationsInfo[i].index;
+		auto currentNewIteration = newIterationsInfo[i].index;
+
+		double radiusResidual = utils::calcResidual(oldExperimentVariables[currentOldIteration].r, newExperimentVariables[currentNewIteration].r);
+		double heightResidual = utils::calcResidual(oldExperimentVariables[currentOldIteration].z, newExperimentVariables[currentNewIteration].z);
+		double commonResidual = std::max(radiusResidual, heightResidual);
+
+		std::cout << "Experiment number:" << std::endl;
+		std::cout << "difference sheme: #" << currentOldIteration << ", angles: #" << currentNewIteration << std::endl;
+		std::cout << "Residual:" << std::endl;
+		std::cout << "radius: " << radiusResidual << ", height: " << heightResidual << std::endl;
+		std::cout << "common: " << commonResidual << std::endl;
+		std::cout << "************************" << std::endl;
+	}
 
 	utils::pauseExecution();
 

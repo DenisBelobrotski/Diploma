@@ -230,4 +230,5 @@ void algorithm::calcResult(void(*runIterationProcess) (Variables &, long long &)
 
 	std::cout << "iterations count: " << iterationsCounter << std::endl;
     std::cout << "experiments count: " << experimentsCounter << std::endl;
+	std::cout << "************************" << std::endl;
 }
