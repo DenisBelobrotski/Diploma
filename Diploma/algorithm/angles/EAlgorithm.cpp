@@ -1,7 +1,8 @@
 #include "EAlgorithm.h"
 #include "../Algorithm.h"
+#include "Formulas.h"
 #include "../Formulas.h"
-#include "../Integrals.h"
+#include "Integrals.h"
 #include "../../utils/Utils.h"
 #include <iostream>
 #include <cmath>

@@ -1,9 +1,10 @@
 #include "DSAlgorithm.h"
-#include "Algorithm.h"
+#include "../Algorithm.h"
+#include "../Formulas.h"
 #include "Formulas.h"
 #include "Integrals.h"
-#include "RightSweep.h"
-#include "../utils/Utils.h"
+#include "../RightSweep.h"
+#include "../../utils/Utils.h"
 #include <vector>
 #include <algorithm>
 #include <math.h>

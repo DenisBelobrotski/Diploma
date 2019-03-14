@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Algorithm.h"
+#include "../Algorithm.h"
 
 #define LOG_BETA 0
 

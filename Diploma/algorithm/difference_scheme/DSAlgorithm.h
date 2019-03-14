@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Algorithm.h"
+#include "../Algorithm.h"
 
 namespace algorithm::ds
 {
