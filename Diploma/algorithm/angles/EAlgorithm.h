@@ -1,4 +1,4 @@
-// Algorithm based on "Euler method" (it looks like Euler method)
+// Algorithm based on "Euler method" (it looks like Euler method, using angles)
 
 #pragma once
 

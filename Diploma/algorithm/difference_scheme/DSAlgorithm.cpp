@@ -112,8 +112,8 @@ void algorithm::ds::runIterationProcess(Variables &variables, long long &iterati
 
 		for (auto i = 0; i < N + 1; i++)
 		{
-			variables.r[i] = (1 - TAU) * prevR[i] + TAU * variables.r[i];
-			variables.z[i] = (1 - TAU) * prevZ[i] + TAU * variables.z[i];
+			variables.r[i] = (1 - variables.TAU) * prevR[i] + variables.TAU * variables.r[i];
+			variables.z[i] = (1 - variables.TAU) * prevZ[i] + variables.TAU * variables.z[i];
 		}
 
 		iterationsCounter++;

@@ -9,8 +9,8 @@
 #include "plot/Plot.h"
 #include "plot/Utils.h"
 #include "algorithm/Algorithm.h"
-#include "algorithm/EAlgorithm.h"
-#include "algorithm/DSAlgorithm.h"
+#include "algorithm/angles/EAlgorithm.h"
+#include "algorithm/difference_scheme/DSAlgorithm.h"
 
 
 plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iterationVariables, 

@@ -1,8 +1,8 @@
 #include "EAlgorithm.h"
-#include "Algorithm.h"
-#include "Formulas.h"
-#include "Integrals.h"
-#include "../utils/Utils.h"
+#include "../Algorithm.h"
+#include "../Formulas.h"
+#include "../Integrals.h"
+#include "../../utils/Utils.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -69,7 +69,7 @@ void algorithm::e::calcBeta(Variables *variables)
 		}
 #else
 		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi +
-			(1 - TAU) * (variables->beta[i] - variables->beta[i + 1] + STEP * upperPhi);
+			(1 - variables->TAU) * (variables->beta[i] - variables->beta[i + 1] + STEP * upperPhi);
 #endif
 
 #if LOG_BETA
@@ -83,7 +83,7 @@ void algorithm::e::calcBeta(Variables *variables)
 #if SIMPLE_RELAXATION_FORMULA
 	for (int i = 0; i < N + 1; i++)
 	{
-		variables->beta[i] = (1 - TAU) * prevBeta[i] + TAU * variables->beta[i];
+		variables->beta[i] = (1 - variables->TAU) * prevBeta[i] + variables->TAU * variables->beta[i];
 	}
 #endif
 }

@@ -52,6 +52,7 @@ void algorithm::fillVariables(algorithm::Variables *variables)
 	}
 
 	variables->L = 0;
+	variables->TAU = INITIAL_TAU;
 	variables->U = INITIAL_U;
 	variables->B0 = INITIAL_B0;
 	variables->A1 = INITIAL_A1;
@@ -159,9 +160,10 @@ void algorithm::pushExperimentResults(long long &experimentsCounter, Variables &
 
     experimentVariables.push_back(resultVariables);
 
-    if (drawRate > 0 && experimentsCounter % drawRate == 0 || isLastExperiment)
+    if ((drawRate > 0 && experimentsCounter % drawRate == 0) || isLastExperiment)
     {
         currentIterationInfo.index = experimentsCounter;
+        currentIterationInfo.tau = variables.TAU;
         currentIterationInfo.u = variables.U;
         currentIterationInfo.b0 = variables.B0;
         currentIterationInfo.a1 = variables.A1;
