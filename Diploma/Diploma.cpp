@@ -8,6 +8,7 @@
 #include "utils/Utils.h"
 #include "plot/Plot.h"
 #include "plot/Utils.h"
+#include "plot/Exceptions.h"
 #include "algorithm/Algorithm.h"
 #include "algorithm/angles/EAlgorithm.h"
 #include "algorithm/difference_scheme/DSAlgorithm.h"
@@ -19,6 +20,8 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iteration
 
 plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> &iterationVariables, 
 							 std::vector<algorithm::IterationInfo> &iterationsInfo);
+
+void configPlotAxesRanges(plot::AxesRanges &axesRanges, std::vector<plot::Graph> &graphs);
 
 
 int main()
@@ -37,15 +40,29 @@ int main()
 	std::cout << "Angles: " << std::endl;
 	algorithm::calcResult(algorithm::e::runIterationProcess, newExperimentVariables, newIterationsInfo);
 
-	plot::Plot *oldMagneticFluidPlot = configMagneticFluidPlot(oldExperimentVariables, oldIterationsInfo, "Old algorithm");
-	oldMagneticFluidPlot->makeGraphs();
-
-	plot::Plot *newMagneticFluidPlot = configMagneticFluidPlot(newExperimentVariables, newIterationsInfo, "New algorithm");
-	newMagneticFluidPlot->makeGraphs();
+	plot::Plot *oldMagneticFluidPlot = configMagneticFluidPlot(oldExperimentVariables, 
+															   oldIterationsInfo, 
+															   "Old algorithm");
+	plot::Plot *newMagneticFluidPlot = configMagneticFluidPlot(newExperimentVariables, 
+															   newIterationsInfo, 
+															   "New algorithm");
+	try
+	{
+		oldMagneticFluidPlot->makeGraphs();
+		newMagneticFluidPlot->makeGraphs();
+	}
+	catch (plot::PipeException &e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	catch (plot::VectorSizeException &e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 
 	std::cout << "*****Residuals*****" << std::endl;
 	auto size = std::min(newIterationsInfo.size(), oldIterationsInfo.size());
-	for (int i = 0; i < size; i++)
+	for (auto i = 0; i < size; i++)
 	{
 		auto currentOldIteration = oldIterationsInfo[i].index;
 		auto currentNewIteration = newIterationsInfo[i].index;
@@ -75,9 +92,10 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iteration
 									std::vector<algorithm::IterationInfo> &iterationsInfo,
 									std::string title)
 {
+	plot::AxesRanges axesRanges{ plot::Range(1, 0), plot::Range(0, 0) };
 	auto graphs = new std::vector<plot::Graph>();
 
-	for (int i = 0; i < iterationsInfo.size(); i++)
+	for (auto i = 0; i < iterationsInfo.size(); i++)
 	{
 		long long currentIteration = iterationsInfo[i].index;
 
@@ -99,8 +117,11 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iteration
 		graph.points = points;
 
 		graphs->push_back(graph);
+
+		
 	}
 
+	configPlotAxesRanges(axesRanges, *graphs);
 
 	auto config = new plot::PlotConfig();
 	config->windowWidth = 1600;
@@ -109,8 +130,7 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iteration
 	config->xAxisName = "Radius";
 	config->yAxisName = "Height";
 	config->legendFontSize = 8;
-	config->xAxisRange = plot::Range(1, 1);
-	config->yAxisRange = plot::Range(0, 2);
+	config->axesRanges = axesRanges;
 	config->equalAxes = true;
 
 	auto plot = new plot::Plot(config, graphs);
@@ -123,4 +143,20 @@ plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> &iterationVariabl
 							 std::vector<algorithm::IterationInfo> &iterationsInfo)
 {
 	return nullptr;
+}
+
+
+void configPlotAxesRanges(plot::AxesRanges &axesRanges, std::vector<plot::Graph> &graphs)
+{
+
+	for (auto &currentGraph : graphs)
+	{
+		for (auto &currentPoint : currentGraph.points)
+		{
+			axesRanges.xAxisRange.end = std::max(axesRanges.xAxisRange.end, currentPoint.x);
+			axesRanges.yAxisRange.end = std::max(axesRanges.yAxisRange.end, currentPoint.y);
+		}
+	}
+	axesRanges.xAxisRange.end = std::ceil(axesRanges.xAxisRange.end);
+	axesRanges.yAxisRange.end = std::ceil(axesRanges.yAxisRange.end);
 }

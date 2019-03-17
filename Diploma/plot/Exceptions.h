@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 
-namespace plot::exceptions
+namespace plot
 {
 
     class PipeException : public std::runtime_error

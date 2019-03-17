@@ -17,8 +17,8 @@ void utils::printVector(std::ostream &os, std::vector<double> &vector)
 
 double utils::calcResidual(std::vector<double> &vector1, std::vector<double> &vector2) noexcept(false)
 {
-	auto size1 = vector1.size();
-	auto size2 = vector2.size();
+	const auto size1 = vector1.size();
+	const auto size2 = vector2.size();
 	if (size1 != size2)
 	{
 		std::stringstream msgStream;
@@ -30,7 +30,7 @@ double utils::calcResidual(std::vector<double> &vector1, std::vector<double> &ve
 
 	auto result = DBL_MIN;
 
-	for (int i = 0; i < vector1.size(); i++)
+	for (auto i = 0; i < vector1.size(); i++)
 	{
 		result = std::max(result, fabs(vector1[i] - vector2[i]));
 	}
@@ -66,9 +66,5 @@ bool utils::isValid(std::vector<double> &vals)
 
 bool utils::isValid(double val)
 {
-	if (!std::isfinite(val))
-	{
-		return false;
-	}
-	return true;
+	return !std::isfinite(val);
 }

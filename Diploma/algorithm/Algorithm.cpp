@@ -69,6 +69,9 @@ void algorithm::changeParameter(void (*runIterationProcess) (Variables &, long l
                                 std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
                                 long long drawRate, const std::string parameterName) noexcept(false)
 {
+#if ALWAYS_RESET_TAU
+	variables.TAU = INITIAL_TAU;
+#endif
 	bool isCalculated = false;
 	const Variables startVariables = variables;
 
@@ -135,10 +138,14 @@ void algorithm::increaseParameter(void(*runIterationProcess) (Variables &, long 
                                   long long drawRate)
 {
     bool isLastExperiment = false;
-    const double halfStep = step / 2;
 
     while (parameter <= target)
     {
+		if (parameter + step >= target)
+		{
+			isLastExperiment = true;
+		}
+
         runExperiment(runIterationProcess, variables, iterationsCounter, experimentsCounter, 
 					  experimentVariables, iterationsInfo, isLastExperiment, drawRate);
 
@@ -148,11 +155,6 @@ void algorithm::increaseParameter(void(*runIterationProcess) (Variables &, long 
 		}
 
         parameter += step;
-
-		if (parameter >= target - halfStep)
-		{
-			isLastExperiment = true;
-		}
     }
 }
 
@@ -163,10 +165,14 @@ void algorithm::decreaseParameter(void(*runIterationProcess) (Variables &, long 
                                   long long drawRate)
 {
     bool isLastExperiment = false;
-	const double halfStep = step / 2;
 
     while (parameter >= target)
     {
+		if (parameter - step <= target)
+		{
+			isLastExperiment = true;
+		}
+
         runExperiment(runIterationProcess, variables, iterationsCounter, experimentsCounter, 
 					  experimentVariables, iterationsInfo, isLastExperiment, drawRate);
 
@@ -175,12 +181,7 @@ void algorithm::decreaseParameter(void(*runIterationProcess) (Variables &, long 
 			break;
 		}
 
-        parameter -= step;
-
-		if (parameter <= target + halfStep)
-		{
-			isLastExperiment = true;
-		}
+		parameter -= step;
     }
 }
 
@@ -209,7 +210,10 @@ void algorithm::pushExperimentResults(long long &experimentsCounter, Variables &
 
     experimentVariables.push_back(resultVariables);
 
-    if ((drawRate > 0 && experimentsCounter % drawRate == 0) || isLastExperiment)
+    if (
+		(drawRate > 0 && experimentsCounter % drawRate == 0) 
+		|| (isLastExperiment && drawRate != -2)
+		)
     {
         currentIterationInfo.index = experimentsCounter;
         currentIterationInfo.tau = variables.TAU;
@@ -251,26 +255,48 @@ void algorithm::calcResult(void(*runIterationProcess) (Variables &, long long &)
 
 	try
 	{
+// ***************U*****************
+		changeParameter(runIterationProcess, variables, variables.U, 100, 10, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -2, "U");
+// ***************A2*****************
 		changeParameter(runIterationProcess, variables, variables.A2, 0.1, 0.05, iterationsCounter,
-			experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
-
+			experimentsCounter, experimentVariables, iterationsInfo, -2, "A2");
+		
+		changeParameter(runIterationProcess, variables, variables.A2, 0.5, 0.05, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -2, "A2");
+		
+		changeParameter(runIterationProcess, variables, variables.A2, 1, 0.05, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -2, "A2");
+		
 		changeParameter(runIterationProcess, variables, variables.A2, 1.5, 0.05, iterationsCounter,
-			experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
-
+			experimentsCounter, experimentVariables, iterationsInfo, -2, "A2");
+		
 		changeParameter(runIterationProcess, variables, variables.A2, 3.0, 0.05, iterationsCounter,
 			experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
+// ***************A1*****************
+		changeParameter(runIterationProcess, variables, variables.A1, 3.0, 0.1, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
 
-		changeParameter(runIterationProcess, variables, variables.A2, 6.0, 0.05, iterationsCounter,
-			experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
+		changeParameter(runIterationProcess, variables, variables.A1, 1.5, 0.1, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+
+		changeParameter(runIterationProcess, variables, variables.A1, 1.0, 0.1, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+
+		changeParameter(runIterationProcess, variables, variables.A1, 0.5, 0.1, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+
+		changeParameter(runIterationProcess, variables, variables.A1, 0.0, 0.1, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+		
+		// changeParameter(runIterationProcess, variables, variables.A2, 6.0, 0.05, iterationsCounter,
+		// 	experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
 	}
 	catch (ParameterNotReachTargetValue &e)
 	{
 		std::cerr << "Parameter " << e.getParameterName() << " didn't reach target value " 
 				  << e.getTargetValue() << std::endl;
 	}
-
-	// changeParameter(runIterationProcess, variables, variables.U, 100.0, 10.0, iterationsCounter,
-	// 				   experimentsCounter, experimentVariables, iterationsInfo, -1);
 
 #if LOG_RESULTS
 	utils::printVector(std::cout, variables.s);

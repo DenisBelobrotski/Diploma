@@ -26,10 +26,16 @@ namespace plot
 	struct Range
 	{
 		double start;
-		double length;
+		double end;
 
-		Range() : start(0), length(0) {}
-		Range(double start, double length) : start(start), length(length) {}
+		Range() : start(0), end(0) {}
+		Range(double start, double end) : start(start), end(end) {}
+	};
+
+	struct AxesRanges
+	{
+		Range xAxisRange;
+		Range yAxisRange;
 	};
 
     struct Point 
@@ -52,8 +58,7 @@ namespace plot
         std::string xAxisName;
         std::string yAxisName;
 		int legendFontSize;
-		Range xAxisRange;
-		Range yAxisRange;
+		AxesRanges axesRanges;
 		bool equalAxes;
     };
 

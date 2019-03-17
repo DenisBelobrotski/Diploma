@@ -21,7 +21,7 @@ void plot::convertComponentsVectorsToPointsVector(std::vector<double> &xComponen
         msgStream << "Components vectors sizes isn't equal: x size: " << xComponentsSize
                   << ", y size: " << yComponentsSize;
 
-        throw exceptions::VectorSizeException(msgStream.str().c_str());
+        throw VectorSizeException(msgStream.str().c_str());
     }
 
     pointsVector.resize(xComponentsSize);

@@ -57,15 +57,15 @@ void plot::Plot::configPlot()
 		fprintf(pipe, "set key font \", %d\"\n", config->legendFontSize);
 	}
 
-	Range xAxisRange = config->xAxisRange;
-	Range yAxisRange = config->yAxisRange;
-	if (xAxisRange.length > 0)
+	Range xAxisRange = config->axesRanges.xAxisRange;
+	Range yAxisRange = config->axesRanges.yAxisRange;
+	if (fabs(xAxisRange.end - xAxisRange.start) > 0)
 	{
-		fprintf(pipe, "set xrange [%lf:%lf]\n", xAxisRange.start, xAxisRange.start + xAxisRange.length);
+		fprintf(pipe, "set xrange [%lf:%lf]\n", xAxisRange.start, xAxisRange.end);
 	}
-	if (yAxisRange.length > 0)
+	if (fabs(yAxisRange.end - yAxisRange.start) > 0)
 	{
-		fprintf(pipe, "set yrange [%lf:%lf]\n", yAxisRange.start, yAxisRange.start + yAxisRange.length);
+		fprintf(pipe, "set yrange [%lf:%lf]\n", yAxisRange.start, yAxisRange.end);
 	}
 
 	if (config->equalAxes)
@@ -79,8 +79,12 @@ void plot::Plot::makeGraphs() noexcept(false)
 {
     if (pipe == nullptr)
     {
-        throw exceptions::PipeException("Gnuplot pipe wasn't opened");
+        throw PipeException("Gnuplot pipe was not opened");
     }
+	if (this->graphs->empty())
+	{
+		throw VectorSizeException("Plot does not contain any graph");
+	}
 
 	configPlot();
 
