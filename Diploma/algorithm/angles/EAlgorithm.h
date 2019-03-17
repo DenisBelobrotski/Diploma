@@ -10,5 +10,5 @@
 
 namespace algorithm::e
 {
-	void runIterationProcess(Variables &variables, long long &iterationsCounter);
+	void runIterationProcess(Variables &variables, long long &iterationsCounter) noexcept(false);
 }

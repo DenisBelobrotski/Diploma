@@ -49,3 +49,26 @@ void utils::pauseExecution()
 	std::cin.get();
 #endif
 }
+
+
+bool utils::isValid(std::vector<double> &vals)
+{
+	for (auto& val : vals)
+	{
+		if (!std::isfinite(val))
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+
+bool utils::isValid(double val)
+{
+	if (!std::isfinite(val))
+	{
+		return false;
+	}
+	return true;
+}

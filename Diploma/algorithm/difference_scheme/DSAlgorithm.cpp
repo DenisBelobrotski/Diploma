@@ -5,6 +5,7 @@
 #include "Integrals.h"
 #include "../RightSweep.h"
 #include "../../utils/Utils.h"
+#include "../Exceptions.h"
 #include <vector>
 #include <algorithm>
 #include <math.h>
@@ -94,8 +95,9 @@ void algorithm::ds::calcIteration(Variables *variables)
 }
 
 
-void algorithm::ds::runIterationProcess(Variables &variables, long long &iterationsCounter)
+void algorithm::ds::runIterationProcess(Variables &variables, long long &iterationsCounter) noexcept(false)
 {
+	long long startIterationsCounter = iterationsCounter;
 	double residual;
 
 	std::vector<double> prevR;
@@ -118,5 +120,15 @@ void algorithm::ds::runIterationProcess(Variables &variables, long long &iterati
 		}
 
 		iterationsCounter++;
+
+		if (iterationsCounter - startIterationsCounter > MAX_ITERATIONS_NUMBER)
+		{
+			throw IterationsLimitException();
+		}
 	} while (residual > ACCURACY);
+
+	if (!utils::isValid(variables.r) || !utils::isValid(variables.z))
+	{
+		throw InvalidResultException();
+	}
 }

@@ -1,34 +1,36 @@
 #include "Algorithm.h"
+#include "Exceptions.h"
 #include "../utils/Utils.h"
 #include <iostream>
+#include <string>
 
 
 namespace algorithm
 {
 	void fillVariables(Variables *variables);
 
-	void changeParameter(void(*runIterationProcess) (Variables &, long long &), 
+	void changeParameter(void(*runIterationProcess) (Variables &, long long &) noexcept(false),
 						 Variables &variables, double &parameter, double target, double step,
                          long long &iterationsCounter, long long &experimentsCounter,
                          std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                         long long drawRate);
+                         long long drawRate, std::string parameterName) noexcept(false);
 
-	void increaseParameter(void(*runIterationProcess) (Variables &, long long &), 
+	void increaseParameter(void(*runIterationProcess) (Variables &, long long &) noexcept(false),
 						   Variables &variables, double &parameter, double target, double step,
                            long long &iterationsCounter, long long &experimentsCounter,
                            std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                           long long drawRate);
+                           long long drawRate) noexcept(false);
 
-	void decreaseParameter(void(*runIterationProcess) (Variables &, long long &), 
+	void decreaseParameter(void(*runIterationProcess) (Variables &, long long &) noexcept(false),
 						   Variables &variables, double &parameter, double target, double step,
                            long long &iterationsCounter, long long &experimentsCounter,
                            std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                           long long drawRate);
+                           long long drawRate) noexcept(false);
 
-    void runExperiment(void(*runIterationProcess) (Variables &, long long &), 
+    void runExperiment(void(*runIterationProcess) (Variables &, long long &) noexcept(false),
 					   Variables &variables, long long &iterationsCounter, long long &experimentsCounter,
                        std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                       bool isLastExperiment, long long drawRate);
+                       bool isLastExperiment, long long drawRate) noexcept(false);
 
 	void pushExperimentResults(long long &experimentsCounter, Variables &variables,
 	                           std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
@@ -61,25 +63,72 @@ void algorithm::fillVariables(algorithm::Variables *variables)
 }
 
 
-void algorithm::changeParameter(void (*runIterationProcess) (Variables &, long long &),
+void algorithm::changeParameter(void (*runIterationProcess) (Variables &, long long &) noexcept(false),
 								Variables &variables, double &parameter, double target, double step,
                                 long long &iterationsCounter, long long &experimentsCounter,
                                 std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                                long long drawRate)
+                                long long drawRate, const std::string parameterName) noexcept(false)
 {
-    if (target > parameter)
-    {
-        increaseParameter(runIterationProcess, variables, parameter, target, step, iterationsCounter,
-                          experimentsCounter, experimentVariables, iterationsInfo, drawRate);
-    }
-    else if (target < parameter)
-    {
-        decreaseParameter(runIterationProcess, variables, parameter, target, step, iterationsCounter,
-                          experimentsCounter, experimentVariables, iterationsInfo, drawRate);
-    }
+	bool isCalculated = false;
+	const Variables startVariables = variables;
+
+	std::cout << "Start changing parameter " << parameterName << std::endl;
+	std::cout << "Current value: " << parameter << ", target value: " << target << std::endl;
+	std::cout << "Step: " << step << std::endl;
+	std::cout << "////////////" << std::endl;
+
+	while (variables.TAU >= MIN_RELAXATION_PARAMETER && !isCalculated)
+	{
+		try
+		{
+			if (target > parameter)
+			{
+				increaseParameter(runIterationProcess, variables, parameter, target, step, iterationsCounter,
+					experimentsCounter, experimentVariables, iterationsInfo, drawRate);
+			}
+			else if (target < parameter)
+			{
+				decreaseParameter(runIterationProcess, variables, parameter, target, step, iterationsCounter,
+					experimentsCounter, experimentVariables, iterationsInfo, drawRate);
+			}
+			isCalculated = true;
+
+		}
+		catch (InvalidResultException &e)
+		{
+			std::cerr << "Invalid result:" << std::endl;
+			std::cout << "relaxation parameter: " << std::endl;
+			std::cout << "current: " << variables.TAU << ", ";
+			variables.TAU *= RELAXATION_MULTIPLIER;
+			std::cout << "new: " << variables.TAU << std::endl;
+			std::cout << "-----" << std::endl;
+		}
+		catch (IterationsLimitException &e)
+		{
+			std::cerr << "Too many iterations:" << std::endl;
+			std::cout << "relaxation parameter: " << std::endl;
+			std::cout << "current: " << variables.TAU << ", ";
+			variables.TAU *= RELAXATION_MULTIPLIER;
+			std::cout << "new: " << variables.TAU << std::endl;
+			std::cout << "-----" << std::endl;
+		}
+
+		if (!isCalculated)
+		{
+			double newTau = variables.TAU;
+			variables = startVariables;
+			variables.TAU = newTau;
+		}
+	}
+	if (!isCalculated)
+	{
+		throw ParameterNotReachTargetValue(parameterName, target);
+	}
+	std::cout << "Finish changing parameter " << parameterName << std::endl;
+	std::cout << "////////////" << std::endl << std::endl;
 }
 
-void algorithm::increaseParameter(void(*runIterationProcess) (Variables &, long long &), 
+void algorithm::increaseParameter(void(*runIterationProcess) (Variables &, long long &) noexcept(false),
 								  Variables &variables, double &parameter, double target, double step,
                                   long long &iterationsCounter, long long &experimentsCounter,
                                   std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
@@ -107,7 +156,7 @@ void algorithm::increaseParameter(void(*runIterationProcess) (Variables &, long 
     }
 }
 
-void algorithm::decreaseParameter(void(*runIterationProcess) (Variables &, long long &), 
+void algorithm::decreaseParameter(void(*runIterationProcess) (Variables &, long long &) noexcept(false),
 								  Variables &variables, double &parameter, double target, double step,
                                   long long &iterationsCounter, long long &experimentsCounter,
                                   std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
@@ -136,12 +185,12 @@ void algorithm::decreaseParameter(void(*runIterationProcess) (Variables &, long 
 }
 
 
-void algorithm::runExperiment(void(*runIterationProcess) (Variables &, long long &), 
+void algorithm::runExperiment(void(*runIterationProcess) (Variables &, long long &) noexcept(false), 
 							  Variables &variables, long long &iterationsCounter, long long &experimentsCounter,
                               std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
                               bool isLastExperiment, long long drawRate)
 {
-    runIterationProcess(variables, iterationsCounter);
+	runIterationProcess(variables, iterationsCounter);
 
     pushExperimentResults(experimentsCounter, variables, experimentVariables, iterationsInfo, isLastExperiment, drawRate);
 
@@ -185,7 +234,7 @@ void algorithm::convertToRadiusDimensionedVariables(Variables &variables)
 }
 
 
-void algorithm::calcResult(void(*runIterationProcess) (Variables &, long long &), 
+void algorithm::calcResult(void(*runIterationProcess) (Variables &, long long &) noexcept(false),
 						   std::vector<Variables> &experimentVariables,
 						   std::vector<IterationInfo> &iterationsInfo)
 {
@@ -200,20 +249,25 @@ void algorithm::calcResult(void(*runIterationProcess) (Variables &, long long &)
 	long long iterationsCounter = 0;
 	long long experimentsCounter = 0;
 
-	changeParameter(runIterationProcess, variables, variables.A2, 0.1, 0.05, iterationsCounter,
-		experimentsCounter, experimentVariables, iterationsInfo, -1);
-    
-    changeParameter(runIterationProcess, variables, variables.A1, 6.0, 1.0, iterationsCounter,
-                    experimentsCounter, experimentVariables, iterationsInfo, -1);
+	try
+	{
+		changeParameter(runIterationProcess, variables, variables.A2, 0.1, 0.05, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
 
-	changeParameter(runIterationProcess, variables, variables.A2, 1.5, 0.05, iterationsCounter,
-	                experimentsCounter, experimentVariables, iterationsInfo, -1);
+		changeParameter(runIterationProcess, variables, variables.A2, 1.5, 0.05, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
 
-	 changeParameter(runIterationProcess, variables, variables.A2, 3.0, 0.05, iterationsCounter,
-	                 experimentsCounter, experimentVariables, iterationsInfo, -1);
- 
-	changeParameter(runIterationProcess, variables, variables.A2, 6.0, 0.05, iterationsCounter,
-					experimentsCounter, experimentVariables, iterationsInfo, -1);
+		changeParameter(runIterationProcess, variables, variables.A2, 3.0, 0.05, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
+
+		changeParameter(runIterationProcess, variables, variables.A2, 6.0, 0.05, iterationsCounter,
+			experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
+	}
+	catch (ParameterNotReachTargetValue &e)
+	{
+		std::cerr << "Parameter " << e.getParameterName() << " didn't reach target value " 
+				  << e.getTargetValue() << std::endl;
+	}
 
 	// changeParameter(runIterationProcess, variables, variables.U, 100.0, 10.0, iterationsCounter,
 	// 				   experimentsCounter, experimentVariables, iterationsInfo, -1);

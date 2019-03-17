@@ -6,5 +6,5 @@
 
 namespace algorithm::ds
 {
-	void runIterationProcess(Variables &variables, long long &iterationsCounter);
+	void runIterationProcess(Variables &variables, long long &iterationsCounter) noexcept(false);
 }

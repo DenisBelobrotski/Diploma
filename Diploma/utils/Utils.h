@@ -12,4 +12,8 @@ namespace utils
 	double calcResidual(std::vector<double> &vector1, std::vector<double> &vector2) noexcept(false);
 
 	void pauseExecution();
+
+	bool isValid(std::vector<double> &vals);
+
+	bool isValid(double val);
 }

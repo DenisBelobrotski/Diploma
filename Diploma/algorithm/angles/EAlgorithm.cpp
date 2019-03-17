@@ -4,6 +4,7 @@
 #include "../Formulas.h"
 #include "Integrals.h"
 #include "../../utils/Utils.h"
+#include "../Exceptions.h"
 #include <iostream>
 #include <cmath>
 #include <algorithm>
@@ -31,12 +32,6 @@ void algorithm::e::calcBeta(Variables *variables)
 	double I1 = calcIntegral1(variables);
 	double I2 = calcIntegral2(variables);
 
-	if (r0 != r0 || r1 != r1 || I0 != I0 || L != L || I1 != I1 || I2 != I2)
-	{
-		std::cerr << "r0 || r1 || I0 || L || I1 || I2 is nan" << std::endl;
-		utils::pauseExecution();
-	}
-
 	double lowerGamma = calcLowerGamma(r0, r1, I1, I2, L,
 		variables->U, variables->B0,
 		variables->A1, variables->ALPHA);
@@ -63,11 +58,6 @@ void algorithm::e::calcBeta(Variables *variables)
 
 #if SIMPLE_RELAXATION_FORMULA
 		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi;
-		if (variables->beta[i] != variables->beta[i])
-		{
-			std::cerr << "beta is nan" << std::endl;
-			utils::pauseExecution();
-		}
 #else
 		variables->beta[i] = variables->beta[i + 1] - STEP * upperPhi +
 			(1 - variables->TAU) * (variables->beta[i] - variables->beta[i + 1] + STEP * upperPhi);
@@ -122,8 +112,9 @@ void algorithm::e::calcIteration(Variables *variables)
 }
 
 
-void algorithm::e::runIterationProcess(Variables &variables, long long &iterationsCounter)
+void algorithm::e::runIterationProcess(Variables &variables, long long &iterationsCounter) noexcept(false)
 {
+	long long startIterationsCounter = iterationsCounter;
 	double residual;
 
 	std::vector<double> prevR;
@@ -140,5 +131,15 @@ void algorithm::e::runIterationProcess(Variables &variables, long long &iteratio
 			utils::calcResidual(prevZ, variables.z));
 
 		iterationsCounter++;
+
+		if (iterationsCounter - startIterationsCounter > MAX_ITERATIONS_NUMBER)
+		{
+			throw IterationsLimitException();
+		}
 	} while (residual > ACCURACY);
+
+	if (!utils::isValid(variables.r) || !utils::isValid(variables.z))
+	{
+		throw InvalidResultException();
+	}
 }

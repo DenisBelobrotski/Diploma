@@ -31,7 +31,7 @@ int main()
 
 	std::cout << "*****Algorithms info*****" << std::endl;
 
-	std::cout << "Difference scheme: " << std::endl;
+	std::cout << "Difference scheme: " << std::endl << std::endl;
 	algorithm::calcResult(algorithm::ds::runIterationProcess, oldExperimentVariables, oldIterationsInfo);
 
 	std::cout << "Angles: " << std::endl;
@@ -55,7 +55,7 @@ int main()
 		double commonResidual = std::max(radiusResidual, heightResidual);
 
 		std::cout << "Experiment number:" << std::endl;
-		std::cout << "difference sheme: #" << currentOldIteration << ", angles: #" << currentNewIteration << std::endl;
+		std::cout << "difference scheme: #" << currentOldIteration << ", angles: #" << currentNewIteration << std::endl;
 		std::cout << "Residual:" << std::endl;
 		std::cout << "radius: " << radiusResidual << ", height: " << heightResidual << std::endl;
 		std::cout << "common: " << commonResidual << std::endl;
@@ -88,7 +88,8 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iteration
 
 		std::stringstream titleStream;
 		titleStream << "#" << currentIteration << " - "
-					<< "U: " << iterationsInfo[i].u
+					<< "TAU: " << iterationsInfo[i].tau
+					<< ", U: " << iterationsInfo[i].u
 					<< ", B0: " << iterationsInfo[i].b0
 					<< ", A1: " << iterationsInfo[i].a1
 					<< ", A2: " << iterationsInfo[i].a2;
@@ -107,7 +108,7 @@ plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iteration
 	config->title = title;
 	config->xAxisName = "Radius";
 	config->yAxisName = "Height";
-	config->legendFontSize = 0;
+	config->legendFontSize = 8;
 	config->xAxisRange = plot::Range(1, 1);
 	config->yAxisRange = plot::Range(0, 2);
 	config->equalAxes = true;
