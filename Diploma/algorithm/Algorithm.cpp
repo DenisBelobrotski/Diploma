@@ -192,6 +192,7 @@ void algorithm::runExperiment(void(*runIterationProcess) (Variables &, long long
                               bool isLastExperiment, long long drawRate)
 {
 	runIterationProcess(variables, iterationsCounter);
+	utils::clearProgressBar();
 
     pushExperimentResults(experimentsCounter, variables, experimentVariables, iterationsInfo, isLastExperiment, drawRate);
 
