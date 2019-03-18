@@ -136,10 +136,15 @@ void algorithm::e::runIterationProcess(Variables &variables, long long &iteratio
 		{
 			throw IterationsLimitException();
 		}
+		else
+		{
+			utils::showIterationsProgressBar(iterationsCounter - startIterationsCounter, MAX_ITERATIONS_NUMBER);
+		}
 	} while (residual > ACCURACY);
 
 	if (!utils::isValid(variables.r) || !utils::isValid(variables.z))
 	{
+        utils::clearProgressBar();
 		throw InvalidResultException();
 	}
 }

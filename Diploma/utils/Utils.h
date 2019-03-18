@@ -16,4 +16,12 @@ namespace utils
 	bool isValid(std::vector<double> &vals);
 
 	bool isValid(double val);
+
+	void showIterationsProgressBar(long long currentIteration, long long maxIteration);
+
+	void showProgressBar(double currentProgress);
+
+	void terminateProgressBar();
+
+	void clearProgressBar();
 }

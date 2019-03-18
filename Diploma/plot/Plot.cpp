@@ -3,7 +3,7 @@
 //
 
 #include <sstream>
-
+#include <cmath>
 #include "Plot.h"
 #include "Exceptions.h"
 

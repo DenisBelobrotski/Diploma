@@ -4,6 +4,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <cmath>
 #include "Diploma.h"
 #include "utils/Utils.h"
 #include "plot/Plot.h"
@@ -43,8 +44,8 @@ int main()
 	plot::Plot *oldMagneticFluidPlot = configMagneticFluidPlot(oldExperimentVariables, 
 															   oldIterationsInfo, 
 															   "Old algorithm");
-	plot::Plot *newMagneticFluidPlot = configMagneticFluidPlot(newExperimentVariables, 
-															   newIterationsInfo, 
+	plot::Plot *newMagneticFluidPlot = configMagneticFluidPlot(newExperimentVariables,
+															   newIterationsInfo,
 															   "New algorithm");
 	try
 	{
