@@ -6,6 +6,9 @@
 
 double algorithm::e::calcLowerPhi(double r, double L, double A2)
 {
+#if CALC_WITHOUT_CONCENTRATION
+	return 1;
+#endif
 	if (A2 == 0.0)
 	{
 		return 1;

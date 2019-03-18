@@ -6,6 +6,9 @@
 
 double algorithm::ds::calcLowerPhi(int i, Variables *variables)
 {
+#if CALC_WITHOUT_CONCENTRATION
+	return 1;
+#endif
     if (i == 0)
     {
         return sinh(variables->A2) / variables->A2;

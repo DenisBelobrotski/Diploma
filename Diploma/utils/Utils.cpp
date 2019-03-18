@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <sstream>
+#include "../algorithm/Algorithm.h"
 
 
 void utils::printVector(std::ostream &os, std::vector<double> &vector)
@@ -73,9 +74,15 @@ bool utils::isValid(double val)
 
 void utils::showIterationsProgressBar(long long currentIteration, long long maxIteration)
 {
-	showProgressBar((double) currentIteration / maxIteration);
+	static int dividor = algorithm::MAX_ITERATIONS_NUMBER / 10;
+    if (currentIteration % dividor == 0 && currentIteration != maxIteration)
+    {
+        showProgressBar((double) currentIteration / maxIteration);
+    }
+
 	if (currentIteration == maxIteration)
 	{
+        showProgressBar((double) currentIteration / maxIteration);
 		clearProgressBar();
 	}
 }

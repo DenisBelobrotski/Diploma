@@ -67,7 +67,7 @@ void algorithm::changeParameter(void (*runIterationProcess) (Variables &, long l
 								Variables &variables, double &parameter, double target, double step,
                                 long long &iterationsCounter, long long &experimentsCounter,
                                 std::vector<Variables> &experimentVariables, std::vector<IterationInfo> &iterationsInfo,
-                                long long drawRate, const std::string parameterName) noexcept(false)
+                                long long drawRate, std::string parameterName) noexcept(false)
 {
 #if ALWAYS_RESET_TAU
 	variables.TAU = INITIAL_TAU;
@@ -75,10 +75,13 @@ void algorithm::changeParameter(void (*runIterationProcess) (Variables &, long l
 	bool isCalculated = false;
 	const Variables startVariables = variables;
 
-	std::cout << "Start changing parameter " << parameterName << std::endl;
-	std::cout << "Current value: " << parameter << ", target value: " << target << std::endl;
-	std::cout << "Step: " << step << std::endl;
-	std::cout << "////////////" << std::endl;
+	if (drawRate != -2)
+	{
+		std::cout << "Start changing parameter " << parameterName << std::endl;
+		std::cout << "Current value: " << parameter << ", target value: " << target << std::endl;
+		std::cout << "Step: " << step << std::endl;
+		std::cout << "////////////" << std::endl;
+	}
 
 	while (variables.TAU >= MIN_RELAXATION_PARAMETER && !isCalculated)
 	{
@@ -127,8 +130,12 @@ void algorithm::changeParameter(void (*runIterationProcess) (Variables &, long l
 	{
 		throw ParameterNotReachTargetValue(parameterName, target);
 	}
-	std::cout << "Finish changing parameter " << parameterName << " to target value " << target << std::endl;
-	std::cout << "////////////" << std::endl << std::endl;
+
+	if (drawRate != -2)
+	{
+		std::cout << "Finish changing parameter " << parameterName << " to target value " << target << std::endl;
+		std::cout << "////////////" << std::endl << std::endl;
+	}
 }
 
 void algorithm::increaseParameter(void(*runIterationProcess) (Variables &, long long &) noexcept(false),
@@ -259,57 +266,32 @@ void algorithm::calcResult(void(*runIterationProcess) (Variables &, long long &)
 // ***************U*****************
 
 		changeParameter(runIterationProcess, variables, variables.U, 100, 10, iterationsCounter,
-						experimentsCounter, experimentVariables, iterationsInfo, -1, "U");
-//		changeParameter(runIterationProcess, variables, variables.U, 200, 10, iterationsCounter,
-//						experimentsCounter, experimentVariables, iterationsInfo, -1, "U");
-//		changeParameter(runIterationProcess, variables, variables.U, 300, 10, iterationsCounter,
-//						experimentsCounter, experimentVariables, iterationsInfo, -1, "U");
-//		changeParameter(runIterationProcess, variables, variables.U, 400, 10, iterationsCounter,
-//						experimentsCounter, experimentVariables, iterationsInfo, -1, "U");
+						experimentsCounter, experimentVariables, iterationsInfo, -2, "U");
 
 // ***************A2*****************
 
-		changeParameter(runIterationProcess, variables, variables.A2, 0.1, 0.05, iterationsCounter,
-						experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
-
-		changeParameter(runIterationProcess, variables, variables.A2, 0.5, 0.05, iterationsCounter,
-						experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
-
 		changeParameter(runIterationProcess, variables, variables.A2, 1, 0.05, iterationsCounter,
-						experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
-
-		changeParameter(runIterationProcess, variables, variables.A2, 1.5, 0.05, iterationsCounter,
-						experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
-
+						experimentsCounter, experimentVariables, iterationsInfo, -2, "A2");
+		
 		changeParameter(runIterationProcess, variables, variables.A2, 3.0, 0.05, iterationsCounter,
 						experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
 
-//		changeParameter(runIterationProcess, variables, variables.A2, 4.0, 0.05, iterationsCounter,
-//						experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
-//
-//		changeParameter(runIterationProcess, variables, variables.A2, 5.0, 0.05, iterationsCounter,
-//						experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
-//
-//		changeParameter(runIterationProcess, variables, variables.A2, 6.0, 0.05, iterationsCounter,
-//						experimentsCounter, experimentVariables, iterationsInfo, -1, "A2");
-
 // ***************A1*****************
 
-//		changeParameter(runIterationProcess, variables, variables.A1, 3.0, 0.1, iterationsCounter,
-//			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
-//
-//		changeParameter(runIterationProcess, variables, variables.A1, 1.5, 0.1, iterationsCounter,
-//			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
-//
-//		changeParameter(runIterationProcess, variables, variables.A1, 1.0, 0.1, iterationsCounter,
-//			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
-//
+		changeParameter(runIterationProcess, variables, variables.A1, 3.0, 0.1, iterationsCounter,
+						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+		
+		changeParameter(runIterationProcess, variables, variables.A1, 1.5, 0.1, iterationsCounter,
+						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+		
+		changeParameter(runIterationProcess, variables, variables.A1, 1.0, 0.1, iterationsCounter,
+						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+
 //		changeParameter(runIterationProcess, variables, variables.A1, 0.5, 0.1, iterationsCounter,
-//			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+//						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
 //
 //		changeParameter(runIterationProcess, variables, variables.A1, 0.0, 0.1, iterationsCounter,
-//			experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
-
+//						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
 	}
 	catch (ParameterNotReachTargetValue &e)
 	{

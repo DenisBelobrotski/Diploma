@@ -10,6 +10,7 @@
 
 #define LOG_RESULTS 0
 #define ALWAYS_RESET_TAU 0
+#define CALC_WITHOUT_CONCENTRATION 0
 
 
 namespace algorithm
@@ -19,7 +20,7 @@ namespace algorithm
 	const double UPPER_BOUND = 1;
 	const double STEP = (UPPER_BOUND - LOWER_BOUND) / N;
 	const double ACCURACY = 1E-5;
-	const int MAX_ITERATIONS_NUMBER = 50000;
+	const int MAX_ITERATIONS_NUMBER = 30000;
 	const double MIN_RELAXATION_PARAMETER = 0.05;
 	const double RELAXATION_MULTIPLIER = 0.5;
 
