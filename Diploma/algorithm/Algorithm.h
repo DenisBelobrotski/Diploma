@@ -15,7 +15,7 @@
 
 namespace algorithm
 {
-	const int N = 100;
+	const int N = 500;
 	const double LOWER_BOUND = 0;
 	const double UPPER_BOUND = 1;
 	const double STEP = (UPPER_BOUND - LOWER_BOUND) / N;

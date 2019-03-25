@@ -50,6 +50,13 @@ namespace plot
         std::string title;
     };
 
+    enum PlotOutputType
+	{
+    	PlotOutputTypeWindow,
+		PlotOutputTypeVectorSvg,
+		PlotOutputTypeRasterPng
+	};
+
     struct PlotConfig 
 	{
         int windowWidth;
@@ -60,6 +67,8 @@ namespace plot
 		int legendFontSize;
 		AxesRanges axesRanges;
 		bool equalAxes;
+		PlotOutputType outputType;
+		std::string outputFilePath;
     };
 
     class Plot 

@@ -43,11 +43,30 @@ plot::Plot::~Plot()
 
 void plot::Plot::configPlot()
 {
+	std::string termMode;
+	switch (config->outputType)
+	{
+		case PlotOutputTypeWindow:
 #ifdef WIN32
-	fprintf(pipe, "set term wxt size %d, %d\n", config->windowWidth, config->windowHeight);
+			termMode = "wxt";
 #else
-	fprintf(pipe, "set term qt size %d, %d\n", config->windowWidth, config->windowHeight);
+			termMode = "qt";
 #endif
+			break;
+		case PlotOutputTypeVectorSvg:
+			termMode = "svg";
+			break;
+		case PlotOutputTypeRasterPng:
+			termMode = "pngcairo";
+			break;
+		default:
+			termMode = "qt";
+	}
+	fprintf(pipe, "set term %s size %d, %d\n", termMode.c_str(), config->windowWidth, config->windowHeight);
+	if (!config->outputFilePath.empty())
+	{
+		fprintf(pipe, "set output \"%s\"\n", config->outputFilePath.c_str());
+	}
 	
 	fprintf(pipe, "set title \"%s\"\n", config->title.c_str());
 	fprintf(pipe, "set xlabel \"%s\"\n", config->xAxisName.c_str());
