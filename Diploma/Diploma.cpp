@@ -59,21 +59,21 @@ int main()
 
 	plot::Plot *oldMagneticFluidPlot = configMagneticFluidPlot(oldExperimentVariables,
 															   oldIterationsInfo,
-															   "Old algorithm",
-															   plot::PlotOutputTypeVectorSvg,
-															   "old_algorithm.svg");
+															   "Finite-difference method",
+															   plot::PlotOutputTypeWindow,
+															   "");
 	plot::Plot *newMagneticFluidPlot = configMagneticFluidPlot(newExperimentVariables,
 															   newIterationsInfo,
-															   "New algorithm",
-															   plot::PlotOutputTypeVectorSvg,
-															   "new_algorithm.svg");
+															   "Tangential method",
+															   plot::PlotOutputTypeWindow,
+															   "");
 	plot::Plot *comparisonPlot = configComparisonPlot(oldExperimentVariables.back(),
 													  oldIterationsInfo.back(),
 													  newExperimentVariables.back(),
 													  newIterationsInfo.back(),
 													  "Comparison",
-                                                      plot::PlotOutputTypeVectorSvg,
-                                                      "comparison.svg");
+                                                      plot::PlotOutputTypeWindow,
+                                                      "");
 
 	try
 	{
@@ -222,7 +222,8 @@ void fillGraphTitleStreamDefault(std::stringstream &titleStream, std::string tit
 				<< ", U: " << iterationInfo.u
 				<< ", B0: " << iterationInfo.b0
 				<< ", A1: " << iterationInfo.a1
-				<< ", A2: " << iterationInfo.a2;
+				<< ", A2: " << iterationInfo.a2
+				<< ", ALPHA: " << iterationInfo.alpha;
 }
 
 

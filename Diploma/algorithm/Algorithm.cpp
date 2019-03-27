@@ -265,7 +265,7 @@ void algorithm::calcResult(void(*runIterationProcess) (Variables &, long long &)
 	{
 // ***************U*****************
 
-		changeParameter(runIterationProcess, variables, variables.U, 100, 10, iterationsCounter,
+		changeParameter(runIterationProcess, variables, variables.U, 101, 1, iterationsCounter,
 						experimentsCounter, experimentVariables, iterationsInfo, -2, "U");
 
 // ***************A2*****************
@@ -281,8 +281,8 @@ void algorithm::calcResult(void(*runIterationProcess) (Variables &, long long &)
 		changeParameter(runIterationProcess, variables, variables.A1, 3.0, 0.1, iterationsCounter,
 						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
 		
-		changeParameter(runIterationProcess, variables, variables.A1, 1.5, 0.1, iterationsCounter,
-						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+//		changeParameter(runIterationProcess, variables, variables.A1, 1.5, 0.1, iterationsCounter,
+//						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
 		
 		changeParameter(runIterationProcess, variables, variables.A1, 1.0, 0.1, iterationsCounter,
 						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
@@ -290,8 +290,8 @@ void algorithm::calcResult(void(*runIterationProcess) (Variables &, long long &)
 //		changeParameter(runIterationProcess, variables, variables.A1, 0.5, 0.1, iterationsCounter,
 //						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
 //
-//		changeParameter(runIterationProcess, variables, variables.A1, 0.0, 0.1, iterationsCounter,
-//						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
+		changeParameter(runIterationProcess, variables, variables.A1, 0.0, 0.1, iterationsCounter,
+						experimentsCounter, experimentVariables, iterationsInfo, -1, "A1");
 	}
 	catch (ParameterNotReachTargetValue &e)
 	{

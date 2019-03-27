@@ -25,9 +25,9 @@ namespace algorithm
 	const double RELAXATION_MULTIPLIER = 0.5;
 
 	const double INITIAL_TAU = 1; //1
-	const double INITIAL_U = 3; //400
+	const double INITIAL_U = 3; //100, 400
     const double INITIAL_B0 = 1; //1
-    const double INITIAL_A1 = 6; //6
+    const double INITIAL_A1 = 6; //0, 1, 3, 6
     const double INITIAL_A2 = 0.05; //0, 1, 3, 6
     const double INITIAL_ALPHA = M_PI_4; //M_PI_4, M_PI_2
 
