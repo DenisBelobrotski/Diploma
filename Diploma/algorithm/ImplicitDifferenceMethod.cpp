@@ -7,7 +7,7 @@
 
 algorithm::ImplicitDifferenceMethod::ImplicitDifferenceMethod() : DifferenceMethod()
 {
-};
+}
 
 
 algorithm::ImplicitDifferenceMethod::ImplicitDifferenceMethod(

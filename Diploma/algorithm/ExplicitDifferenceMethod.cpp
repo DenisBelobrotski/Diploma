@@ -6,7 +6,7 @@
 
 algorithm::ExplicitDifferenceMethod::ExplicitDifferenceMethod() : DifferenceMethod()
 {
-};
+}
 
 
 algorithm::ExplicitDifferenceMethod::ExplicitDifferenceMethod(
@@ -54,7 +54,7 @@ void algorithm::ExplicitDifferenceMethod::calcBeta()
         variables.beta[i] = variables.beta[i + 1] - STEP * upperPhi;
 #else
         variables.beta[i] = variables.beta[i + 1] - STEP * upperPhi +
-			(1 - variables.TAU) * (variables.beta[i] - variables.beta[i + 1] + STEP * upperPhi);
+            (1 - variables.TAU) * (variables.beta[i] - variables.beta[i + 1] + STEP * upperPhi);
 #endif
     }
 
@@ -163,7 +163,7 @@ double algorithm::ExplicitDifferenceMethod::calcLowerGamma(
         double r0, double r1, double I1, double I2, double L, double U, double B0, double A1, double ALPHA)
 {
     return (2 / (r1 * r1 - r0 * r0)) * (r0 * cos(ALPHA) - r1 * sin(ALPHA) - (B0 * U) / (2 * M_PI * L) +
-        (A1 * U * I2) / (I1 * L * L));
+                                        (A1 * U * I2) / (I1 * L * L));
 }
 
 

@@ -92,7 +92,7 @@ namespace algorithm
 
         void changeParameter(
                 double &parameter, double target, double step, long long drawRate, std::string parameterName)
-                noexcept(false);
+        noexcept(false);
 
         void increaseParameter(double &parameter, double target, double step, long long drawRate) noexcept(false);
 

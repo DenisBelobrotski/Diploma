@@ -13,6 +13,8 @@
 #include "algorithm/DifferenceMethod.h"
 #include "algorithm/ImplicitDifferenceMethod.h"
 #include "algorithm/ExplicitDifferenceMethod.h"
+#include "algorithm/ImplicitMethodUniformConcentration.h"
+#include "algorithm/ExplicitMethodUniformConcentration.h"
 
 
 plot::Plot* configMagneticFluidPlot(
