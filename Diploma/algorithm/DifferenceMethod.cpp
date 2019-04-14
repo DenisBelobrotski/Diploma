@@ -255,18 +255,6 @@ void algorithm::DifferenceMethod::calcResult()
                   << e.getTargetValue() << std::endl;
     }
 
-#if LOG_RESULTS
-    utils::printVector(std::cout, variables.s);
-	std::cout << "************************" << std::endl;
-	utils::printVector(std::cout, variables.r);
-	std::cout << "************************" << std::endl;
-	utils::printVector(std::cout, variables.z);
-	std::cout << "************************" << std::endl;
-	utils::printVector(std::cout, variables.beta);
-	std::cout << "************************" << std::endl;
-#endif
-
-
     std::cout << "iterations count: " << iterationsCounter << std::endl;
     std::cout << "experiments count: " << experimentsCounter << std::endl;
     std::cout << "************************" << std::endl;

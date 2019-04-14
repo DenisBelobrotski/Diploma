@@ -7,7 +7,6 @@
 #include <string>
 
 
-#define LOG_RESULTS 0
 #define ALWAYS_RESET_TAU 0
 #define CALC_WITHOUT_CONCENTRATION 0
 

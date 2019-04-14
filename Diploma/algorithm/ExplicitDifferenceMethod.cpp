@@ -37,13 +37,6 @@ void algorithm::ExplicitDifferenceMethod::calcBeta()
                                        variables.U, variables.B0,
                                        variables.A1, variables.ALPHA);
 
-#if LOG_BETA
-    std::cout << "r0: " << r0 << " r1: " << r1 << std::endl;
-	std::cout << "I0: " << I0 << " L: " << L << std::endl;
-	std::cout << "I1: " << I1 << " I2: " << I2 << std::endl;
-	std::cout << "*****************" << std::endl;
-#endif
-
 #if SIMPLE_RELAXATION_FORMULA
     std::vector<double> prevBeta = variables.beta;
 #endif
@@ -62,13 +55,6 @@ void algorithm::ExplicitDifferenceMethod::calcBeta()
 #else
         variables.beta[i] = variables.beta[i + 1] - STEP * upperPhi +
 			(1 - variables.TAU) * (variables.beta[i] - variables.beta[i + 1] + STEP * upperPhi);
-#endif
-
-#if LOG_BETA
-        std::cout << "tmpR: " << tmpR << " tmpZ: " << tmpZ << std::endl;
-		std::cout << "tmpBeta: " << tmpBeta << " upperPhi: " << upperPhi << std::endl;
-		std::cout << "newBeta: " << variables.beta[i] << std::endl;
-		std::cout << "**********" << std::endl;
 #endif
     }
 
@@ -169,13 +155,6 @@ double algorithm::ExplicitDifferenceMethod::calcLowerPhi(double r, double L, dou
 
     double result = tmp * sinH;
 
-#if LOG_LOWER_PHI
-    std::cout << "r: " << r << " L: " << L << " A2: " << A2 << std::endl;
-	std::cout << "tmp: " << tmp << " invertTmp: " << invertTmp << " sinH: " << sinH << std::endl;
-	std::cout << "result: " << result << std::endl;
-	std::cout << "************" << std::endl;
-#endif
-
     return result;
 }
 
@@ -209,25 +188,9 @@ double algorithm::ExplicitDifferenceMethod::calcIntegral0()
         double tmpBeta = (variables.beta[i - 1] + variables.beta[i]) / 2;
         double tmp = tmpZ * tmpR * cos(tmpBeta);
         result += tmp;
-#if LOG_INTEGRAL_0
-        std::cout << "tmpR: " << tmpR << " tmpZ: " << tmpZ << std::endl;
-		std::cout << "tmpBeta: " << tmpBeta << std::endl;
-		std::cout << "tmp: " << tmp << std::endl;
-		std::cout << "*********" << std::endl;
-#endif
     }
 
-#if LOG_INTEGRAL_0
-    std::cout << "result: " << result << std::endl;
-	std::cout << "************" << std::endl;
-#endif
-
     result *= 2 * M_PI * STEP;
-
-#if LOG_INTEGRAL_0
-    std::cout << "final result: " << result << std::endl;
-	std::cout << "************" << std::endl;
-#endif
 
     return result;
 }
@@ -245,25 +208,9 @@ double algorithm::ExplicitDifferenceMethod::calcIntegral1()
         double lowerPhi = calcLowerPhi(tmpR, variables.L, variables.A2);
         double tmp = lowerPhi * tmpZ * tmpR * cos(tmpBeta);
         result += tmp;
-#if LOG_INTEGRAL_1
-        std::cout << "tmpR: " << tmpR << " tmpZ: " << tmpZ << std::endl;
-		std::cout << "tmpBeta: " << tmpBeta << " lowerPhi: " << lowerPhi << std::endl;
-		std::cout << "tmp: " << tmp << std::endl;
-		std::cout << "*********" << std::endl;
-#endif
     }
 
-#if LOG_INTEGRAL_1
-    std::cout << "result: " << result << std::endl;
-	std::cout << "************" << std::endl;
-#endif
-
     result *= 2 * M_PI * STEP;
-
-#if LOG_INTEGRAL_1
-    std::cout << "final result: " << result << std::endl;
-	std::cout << "************" << std::endl;
-#endif
 
     return result;
 }
@@ -280,25 +227,9 @@ double algorithm::ExplicitDifferenceMethod::calcIntegral2()
         double lowerPhi = calcLowerPhi(tmpR, variables.L, variables.A2);
         double tmp = lowerPhi * tmpR * cos(tmpBeta);
         result += tmp;
-#if LOG_INTEGRAL_2
-        std::cout << "tmpR: " << tmpR << std::endl;
-		std::cout << "tmpBeta: " << tmpBeta << " lowerPhi: " << lowerPhi << std::endl;
-		std::cout << "tmp: " << tmp << std::endl;
-		std::cout << "*********" << std::endl;
-#endif
     }
 
-#if LOG_INTEGRAL_2
-    std::cout << "result: " << result << std::endl;
-	std::cout << "************" << std::endl;
-#endif
-
     result *= STEP;
-
-#if LOG_INTEGRAL_2
-    std::cout << "final result: " << result << std::endl;
-	std::cout << "************" << std::endl;
-#endif
 
     return result;
 }

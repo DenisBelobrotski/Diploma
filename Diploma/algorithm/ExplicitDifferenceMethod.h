@@ -3,14 +3,7 @@
 #include "DifferenceMethod.h"
 
 
-#define LOG_BETA 0
-
 #define SIMPLE_RELAXATION_FORMULA 1
-#define LOG_LOWER_PHI 0
-
-#define LOG_INTEGRAL_0 0
-#define LOG_INTEGRAL_1 0
-#define LOG_INTEGRAL_2 0
 
 
 namespace algorithm
