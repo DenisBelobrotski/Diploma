@@ -7,9 +7,9 @@
 
 namespace algorithm
 {
-	bool isCorrectMatrix(std::vector<std::vector<double>> &matrix, const size_t dimension);
+	bool isCorrectMatrix(std::vector<std::vector<double>> &matrix, size_t dimension);
 
-	void calcRightSweepAlpha(std::vector<std::vector<double>> &matrix, const size_t dimension, std::vector<double> &alpha);
+	void calcRightSweepAlpha(std::vector<std::vector<double>> &matrix, size_t dimension, std::vector<double> &alpha);
 
 	void calcRightSweepBeta(std::vector<std::vector<double>> &matrix, std::vector<double> &freeMembers,
 		std::vector<double> &alpha, std::vector<double> &beta);

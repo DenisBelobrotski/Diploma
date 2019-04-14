@@ -1,5 +1,5 @@
 #include "Formulas.h"
-#include "Algorithm.h"
+#include "DifferenceMethod.h"
 #include <cmath>
 
 
@@ -22,4 +22,14 @@ int algorithm::sgn(double value)
 double algorithm::calcL(double I0, double U)
 {
 	return sgn(I0) * pow(U / fabs(I0), 1.0 / 3);
+}
+
+
+void algorithm::convertLengthToRadiusDimensionedVariables(Variables &variables)
+{
+	for (int i = 0; i < variables.r.size(); i++)
+	{
+		variables.r[i] *= variables.L;
+		variables.z[i] *= variables.L;
+	}
 }

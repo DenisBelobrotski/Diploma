@@ -1,12 +1,11 @@
 #include "Utils.h"
 #include "Exceptions.h"
+#include "../algorithm/DifferenceMethod.h"
 #include <iostream>
 #include <cfloat>
 #include <cmath>
 #include <algorithm>
 #include <sstream>
-#include "../algorithm/Algorithm.h"
-
 
 void utils::printVector(std::ostream &os, std::vector<double> &vector)
 {

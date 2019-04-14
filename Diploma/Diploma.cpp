@@ -10,76 +10,95 @@
 #include "plot/Plot.h"
 #include "plot/Utils.h"
 #include "plot/Exceptions.h"
-#include "algorithm/Algorithm.h"
-#include "algorithm/angles/EAlgorithm.h"
-#include "algorithm/difference_scheme/DSAlgorithm.h"
+#include "algorithm/DifferenceMethod.h"
+#include "algorithm/ImplicitDifferenceMethod.h"
+#include "algorithm/ExplicitDifferenceMethod.h"
 
 
-plot::Plot* configMagneticFluidPlot(std::vector<algorithm::Variables> &iterationVariables, 
-									std::vector<algorithm::IterationInfo> &iterationsInfo,
-									std::string title, plot::PlotOutputType outputType,
-                                    std::string outputFilePath);
+plot::Plot* configMagneticFluidPlot(
+		std::vector<algorithm::Variables> &iterationVariables, std::vector<algorithm::IterationInfo> &iterationsInfo,
+		std::string title, plot::PlotOutputType outputType, std::string outputFilePath);
 
-plot::Plot* configAnglesPlot(std::vector<algorithm::Variables> &iterationVariables, 
-							 std::vector<algorithm::IterationInfo> &iterationsInfo);
+plot::Plot* configAnglesPlot(
+		std::vector<algorithm::Variables> &iterationVariables, std::vector<algorithm::IterationInfo> &iterationsInfo);
 
 void configPlotAxesRanges(plot::AxesRanges &axesRanges, std::vector<plot::Graph> &graphs);
 
-plot::Plot* configComparisonPlot(algorithm::Variables &oldIterationVariables,
-								 algorithm::IterationInfo &oldIterationInfo,
-								 algorithm::Variables &newIterationVariables,
-								 algorithm::IterationInfo &newIterationInfo,
-								 std::string title, plot::PlotOutputType outputType,
-                                 std::string outputFilePath);
+plot::Plot* configComparisonPlot(
+		algorithm::Variables &oldIterationVariables, algorithm::IterationInfo &oldIterationInfo,
+		algorithm::Variables &newIterationVariables, algorithm::IterationInfo &newIterationInfo,
+		std::string title, plot::PlotOutputType outputType, std::string outputFilePath);
 
-void fillGraphTitleStreamDefault(std::stringstream &titleStream, std::string title,
-								 algorithm::IterationInfo &iterationInfo);
+void fillGraphTitleStreamDefault(
+		std::stringstream &titleStream, std::string title, algorithm::IterationInfo &iterationInfo);
 
 void configDefaultPlot(plot::PlotConfig &config);
 
-plot::Plot* createDefaultPlot(std::vector<plot::Graph> *graphs, std::string title,
-                              plot::PlotOutputType outputType, std::string outputFilePath);
+plot::Plot* createDefaultPlot(
+		std::vector<plot::Graph> *graphs, std::string title, plot::PlotOutputType outputType, std::string outputFilePath);
 
 
 int main()
 {
-	std::vector<algorithm::Variables> oldExperimentVariables;
-	std::vector<algorithm::Variables> newExperimentVariables;
-
-	std::vector<algorithm::IterationInfo> oldIterationsInfo;
-	std::vector<algorithm::IterationInfo> newIterationsInfo;
-
-	std::cout << "*****Algorithms info*****" << std::endl;
-
-	std::cout << "Difference scheme: " << std::endl << std::endl;
-	algorithm::calcResult(algorithm::ds::runIterationProcess, oldExperimentVariables, oldIterationsInfo);
-
-	std::cout << "Angles: " << std::endl;
-	algorithm::calcResult(algorithm::e::runIterationProcess, newExperimentVariables, newIterationsInfo);
-
-	plot::Plot *oldMagneticFluidPlot = configMagneticFluidPlot(oldExperimentVariables,
-															   oldIterationsInfo,
-															   "Finite-difference method",
-															   plot::PlotOutputTypeWindow,
-															   "");
-	plot::Plot *newMagneticFluidPlot = configMagneticFluidPlot(newExperimentVariables,
-															   newIterationsInfo,
-															   "Tangential method",
-															   plot::PlotOutputTypeWindow,
-															   "");
-	plot::Plot *comparisonPlot = configComparisonPlot(oldExperimentVariables.back(),
-													  oldIterationsInfo.back(),
-													  newExperimentVariables.back(),
-													  newIterationsInfo.back(),
-													  "Comparison",
-                                                      plot::PlotOutputTypeWindow,
-                                                      "");
-
 	try
 	{
-		oldMagneticFluidPlot->makeGraphs();
-		newMagneticFluidPlot->makeGraphs();
+
+		std::vector<algorithm::Variables> implicitExperimentVariables;
+		std::vector<algorithm::Variables> explicitExperimentVariables;
+
+		std::vector<algorithm::IterationInfo> implicitIterationsInfo;
+		std::vector<algorithm::IterationInfo> explicitIterationsInfo;
+
+		algorithm::DifferenceMethod *implicitDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
+				&implicitExperimentVariables, &implicitIterationsInfo);
+		algorithm::DifferenceMethod *explicitDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
+				&explicitExperimentVariables, &explicitIterationsInfo);
+
+		std::cout << "*****Algorithms info*****" << std::endl;
+
+		std::cout << "Difference scheme: " << std::endl << std::endl;
+		implicitDifferenceMethod->calcResult();
+
+		std::cout << "Angles: " << std::endl;
+		explicitDifferenceMethod->calcResult();
+
+		plot::Plot *implicitMethodPlot = configMagneticFluidPlot(
+				implicitExperimentVariables, implicitIterationsInfo, "Finite-difference method",
+				plot::PlotOutputTypeWindow, "");
+		plot::Plot *explicitMethodPlot = configMagneticFluidPlot(
+				explicitExperimentVariables, explicitIterationsInfo, "Tangential method", plot::PlotOutputTypeWindow, "");
+		plot::Plot *comparisonPlot = configComparisonPlot(
+				implicitExperimentVariables.back(), implicitIterationsInfo.back(), explicitExperimentVariables.back(),
+				explicitIterationsInfo.back(), "Comparison", plot::PlotOutputTypeWindow, "");
+
+		implicitMethodPlot->makeGraphs();
+		explicitMethodPlot->makeGraphs();
 		comparisonPlot->makeGraphs();
+
+		std::cout << "*****Residuals*****" << std::endl;
+		auto size = std::min(explicitIterationsInfo.size(), implicitIterationsInfo.size());
+		for (auto i = 0; i < size; i++)
+		{
+			auto currentOldIteration = implicitIterationsInfo[i].index;
+			auto currentNewIteration = explicitIterationsInfo[i].index;
+
+			double radiusResidual = utils::calcResidual(implicitExperimentVariables[currentOldIteration].r, explicitExperimentVariables[currentNewIteration].r);
+			double heightResidual = utils::calcResidual(implicitExperimentVariables[currentOldIteration].z, explicitExperimentVariables[currentNewIteration].z);
+			double commonResidual = std::max(radiusResidual, heightResidual);
+
+			std::cout << "Experiment number:" << std::endl;
+			std::cout << "difference scheme: #" << currentOldIteration << ", angles: #" << currentNewIteration << std::endl;
+			std::cout << "Residual:" << std::endl;
+			std::cout << "radius: " << radiusResidual << ", height: " << heightResidual << std::endl;
+			std::cout << "common: " << commonResidual << std::endl;
+			std::cout << "************************" << std::endl;
+		}
+
+		utils::pauseExecution();
+
+		delete explicitMethodPlot;
+		delete implicitMethodPlot;
+		delete comparisonPlot;
 	}
 	catch (plot::PipeException &e)
 	{
@@ -89,31 +108,10 @@ int main()
 	{
 		std::cerr << e.what() << std::endl;
 	}
-
-	std::cout << "*****Residuals*****" << std::endl;
-	auto size = std::min(newIterationsInfo.size(), oldIterationsInfo.size());
-	for (auto i = 0; i < size; i++)
+	catch (std::runtime_error &e)
 	{
-		auto currentOldIteration = oldIterationsInfo[i].index;
-		auto currentNewIteration = newIterationsInfo[i].index;
-
-		double radiusResidual = utils::calcResidual(oldExperimentVariables[currentOldIteration].r, newExperimentVariables[currentNewIteration].r);
-		double heightResidual = utils::calcResidual(oldExperimentVariables[currentOldIteration].z, newExperimentVariables[currentNewIteration].z);
-		double commonResidual = std::max(radiusResidual, heightResidual);
-
-		std::cout << "Experiment number:" << std::endl;
-		std::cout << "difference scheme: #" << currentOldIteration << ", angles: #" << currentNewIteration << std::endl;
-		std::cout << "Residual:" << std::endl;
-		std::cout << "radius: " << radiusResidual << ", height: " << heightResidual << std::endl;
-		std::cout << "common: " << commonResidual << std::endl;
-		std::cout << "************************" << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
-
-	utils::pauseExecution();
-
-	delete newMagneticFluidPlot;
-	delete oldMagneticFluidPlot;
-	delete comparisonPlot;
 
 	return 0;
 }
