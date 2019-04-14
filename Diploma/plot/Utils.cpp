@@ -8,9 +8,9 @@
 #include "Exceptions.h"
 
 
-void plot::convertComponentsVectorsToPointsVector(std::vector<double> &xComponents,
-                                                  std::vector<double> &yComponents,
-                                                  std::vector<Point> &pointsVector) noexcept(false)
+void plot::convertComponentsVectorsToPointsVector(
+        std::vector<double> &xComponents, std::vector<double> &yComponents,
+        std::vector<Point> &pointsVector) noexcept(false)
 {
     auto xComponentsSize = xComponents.size();
     auto yComponentsSize = yComponents.size();

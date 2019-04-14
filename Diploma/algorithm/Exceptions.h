@@ -19,14 +19,16 @@ namespace algorithm
         IterationsLimitException();
     };
 
-	class ParameterNotReachTargetValue : public std::runtime_error
-	{
-	private:
-		std::string parameterName;
-		double targetValue;
-	public:
-		ParameterNotReachTargetValue(std::string parameterName, double targetValue);
-		std::string getParameterName();
-		double getTargetValue();
-	};
+    class ParameterNotReachTargetValue : public std::runtime_error
+    {
+    private:
+        std::string parameterName;
+        double targetValue;
+    public:
+        ParameterNotReachTargetValue(std::string parameterName, double targetValue);
+
+        std::string getParameterName();
+
+        double getTargetValue();
+    };
 }

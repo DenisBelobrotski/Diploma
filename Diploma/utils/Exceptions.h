@@ -10,7 +10,8 @@ namespace utils::exceptions
 
     public:
         VectorSizeException();
-        explicit VectorSizeException(const char * msg);
+
+        explicit VectorSizeException(const char *msg);
 
     };
 }
