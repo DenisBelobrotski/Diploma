@@ -29,11 +29,15 @@ algorithm::DifferenceMethod::DifferenceMethod(
     variables.r = std::vector<double>(N + 1);
     variables.z = std::vector<double>(N + 1);
     variables.beta = std::vector<double>(N + 1);
+
+    isNeedResetTau = false;
 }
 
 
 algorithm::DifferenceMethod::~DifferenceMethod() = default;
 
+
+#pragma MARK - Algorithm
 
 void algorithm::DifferenceMethod::fillVariables()
 {
@@ -71,9 +75,11 @@ void algorithm::DifferenceMethod::resetFields()
 void algorithm::DifferenceMethod::changeParameter(
         double &parameter, double target, double step, long long drawRate, std::string parameterName) noexcept(false)
 {
-#if ALWAYS_RESET_TAU
-    variables.TAU = INITIAL_TAU;
-#endif
+    if (isNeedResetTau)
+    {
+        variables.TAU = INITIAL_TAU;
+    }
+
     bool isCalculated = false;
     const Variables startVariables = variables;
 
@@ -258,4 +264,18 @@ void algorithm::DifferenceMethod::calcResult()
     std::cout << "iterations count: " << iterationsCounter << std::endl;
     std::cout << "experiments count: " << experimentsCounter << std::endl;
     std::cout << "************************" << std::endl;
+}
+
+
+#pragma MARK - Setters/Getters
+
+void algorithm::DifferenceMethod::setIsNeedResetTau(bool isNeedResetTau)
+{
+    this->isNeedResetTau = isNeedResetTau;
+}
+
+
+bool algorithm::DifferenceMethod::getIsNeedResetTau()
+{
+    return isNeedResetTau;
 }

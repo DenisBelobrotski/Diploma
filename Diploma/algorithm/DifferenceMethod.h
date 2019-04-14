@@ -7,10 +7,6 @@
 #include <string>
 
 
-#define ALWAYS_RESET_TAU 0
-#define CALC_WITHOUT_CONCENTRATION 0
-
-
 namespace algorithm
 {
     const int N = 200; //500
@@ -69,6 +65,7 @@ namespace algorithm
         std::vector<Variables> *experimentVariables;
         std::vector<IterationInfo> *iterationsInfo;
         bool isLastExperiment;
+        bool isNeedResetTau;
 
     public:
         DifferenceMethod(
@@ -78,6 +75,10 @@ namespace algorithm
         ~DifferenceMethod();
 
         void calcResult();
+
+        void setIsNeedResetTau(bool isNeedResetTau);
+
+        bool getIsNeedResetTau();
 
     protected:
         DifferenceMethod();

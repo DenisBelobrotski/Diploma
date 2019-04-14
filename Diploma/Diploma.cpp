@@ -56,6 +56,9 @@ int main()
         algorithm::DifferenceMethod *explicitDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
                 &explicitExperimentVariables, &explicitIterationsInfo);
 
+        implicitDifferenceMethod->setIsNeedResetTau(false);
+        explicitDifferenceMethod->setIsNeedResetTau(false);
+
         std::cout << "*****Algorithms info*****" << std::endl;
 
         std::cout << "Difference scheme: " << std::endl << std::endl;

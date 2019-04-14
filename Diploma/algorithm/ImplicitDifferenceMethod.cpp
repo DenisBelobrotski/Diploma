@@ -138,9 +138,6 @@ void algorithm::ImplicitDifferenceMethod::runIterationProcess() noexcept(false)
 
 double algorithm::ImplicitDifferenceMethod::calcLowerPhi(int i)
 {
-#if CALC_WITHOUT_CONCENTRATION
-    return 1;
-#endif
     if (i == 0)
     {
         return sinh(variables.A2) / variables.A2;
