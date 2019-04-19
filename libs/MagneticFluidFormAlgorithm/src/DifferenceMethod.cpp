@@ -1,9 +1,9 @@
-#include "DifferenceMethod.h"
-#include "Exceptions.h"
-#include "../utils/Utils.h"
 #include "Formulas.h"
+
 #include <iostream>
 #include <string>
+
+#include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
 
 
 algorithm::DifferenceMethod::DifferenceMethod() = default;

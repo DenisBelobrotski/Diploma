@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "DifferenceMethod.h"
+#include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
 
 
 namespace algorithm

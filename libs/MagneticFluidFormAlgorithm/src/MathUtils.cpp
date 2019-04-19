@@ -1,8 +1,8 @@
-#include "MathUtils.h"
-#include "Exceptions.h"
 #include <sstream>
 #include <cfloat>
 #include <cmath>
+
+#include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
 
 
 double algorithm::calcResidual(std::vector<double> &vector1, std::vector<double> &vector2) noexcept(false)

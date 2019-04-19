@@ -4,8 +4,7 @@
 
 #include <sstream>
 
-#include "Utils.h"
-#include "Exceptions.h"
+#include <GNUPlotWrapper/GNUPlotWrapper.h>
 
 
 void plot::convertComponentsVectorsToPointsVector(

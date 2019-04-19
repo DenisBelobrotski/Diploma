@@ -1,8 +1,10 @@
 #include "RightSweep.h"
+
 #include <vector>
 #include <cmath>
 #include <iostream>
-#include "../utils/Utils.h"
+
+#include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
 
 
 namespace algorithm

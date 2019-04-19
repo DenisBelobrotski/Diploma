@@ -1,21 +1,13 @@
-// Diploma.cpp : Defines the entry point for the application.
-//
+#include "Diploma.h"
+#include "Utils.h"
 
 #include <sstream>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
-#include "Diploma.h"
-#include "utils/Utils.h"
-#include "plot/Plot.h"
-#include "plot/Utils.h"
-#include "plot/Exceptions.h"
-#include "algorithm/DifferenceMethod.h"
-#include "algorithm/ImplicitDifferenceMethod.h"
-#include "algorithm/ExplicitDifferenceMethod.h"
-#include "algorithm/ImplicitMethodUniformConcentration.h"
-#include "algorithm/ExplicitMethodUniformConcentration.h"
-#include "algorithm/MathUtils.h"
+
+#include <GNUPlotWrapper/GNUPlotWrapper.h>
+#include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
 
 
 plot::Plot *configMagneticFluidPlot(

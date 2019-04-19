@@ -1,4 +1,5 @@
-#include "Exceptions.h"
+#include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
+
 
 algorithm::InvalidResultException::InvalidResultException() :
         std::runtime_error("Result contains NaN or Infinity") {}

@@ -4,8 +4,8 @@
 
 #include <sstream>
 #include <cmath>
-#include "Plot.h"
-#include "Exceptions.h"
+
+#include <GNUPlotWrapper/GNUPlotWrapper.h>
 
 
 plot::Plot::Plot()

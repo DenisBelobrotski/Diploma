@@ -1,6 +1,8 @@
 #include "Formulas.h"
-#include "DifferenceMethod.h"
+
 #include <cmath>
+
+#include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
 
 
 int algorithm::sgn(double value)
