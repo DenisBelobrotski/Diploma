@@ -1,0 +1,6 @@
+[submodule "libs/GnuplotWrapper"]
+	path = libs/GnuplotWrapper
+	url = https://github.com/DenisBelobrotski/GnuplotWrapper.git
+[submodule "libs/MagneticFluidFormAlgorithm"]
+	path = libs/MagneticFluidFormAlgorithm
+	url = https://github.com/DenisBelobrotski/MagneticFluidFormAlgorithm.git

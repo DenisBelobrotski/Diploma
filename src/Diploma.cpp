@@ -1,20 +1,13 @@
-// Diploma.cpp : Defines the entry point for the application.
-//
+#include "Diploma.h"
+#include "Utils.h"
 
 #include <sstream>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
-#include "Diploma.h"
-#include "utils/Utils.h"
-#include "plot/Plot.h"
-#include "plot/Utils.h"
-#include "plot/Exceptions.h"
-#include "algorithm/DifferenceMethod.h"
-#include "algorithm/ImplicitDifferenceMethod.h"
-#include "algorithm/ExplicitDifferenceMethod.h"
-#include "algorithm/ImplicitMethodUniformConcentration.h"
-#include "algorithm/ExplicitMethodUniformConcentration.h"
+
+#include <GnuplotWrapper/GnuplotWrapper.h>
+#include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
 
 
 plot::Plot *configMagneticFluidPlot(
@@ -59,6 +52,14 @@ int main()
         implicitDifferenceMethod->setIsNeedResetTau(false);
         explicitDifferenceMethod->setIsNeedResetTau(false);
 
+        std::function<void(long long, long long)> showIterationsProgressBarFunction =
+                [](long long currentIteration, long long maxIterations)
+                {
+                    utils::showIterationsProgressBar(currentIteration, maxIterations);
+                };
+        implicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
+        explicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
+
         std::cout << "*****Algorithms info*****" << std::endl;
 
         std::cout << "Difference scheme: " << std::endl << std::endl;
@@ -88,9 +89,9 @@ int main()
             auto currentOldIteration = implicitIterationsInfo[i].index;
             auto currentNewIteration = explicitIterationsInfo[i].index;
 
-            double radiusResidual = utils::calcResidual(implicitExperimentVariables[currentOldIteration].r,
+            double radiusResidual = algorithm::calcResidual(implicitExperimentVariables[currentOldIteration].r,
                                                         explicitExperimentVariables[currentNewIteration].r);
-            double heightResidual = utils::calcResidual(implicitExperimentVariables[currentOldIteration].z,
+            double heightResidual = algorithm::calcResidual(implicitExperimentVariables[currentOldIteration].z,
                                                         explicitExperimentVariables[currentNewIteration].z);
             double commonResidual = std::max(radiusResidual, heightResidual);
 
