@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <cmath>
 
-#include <GNUPlotWrapper/GNUPlotWrapper.h>
+#include <GnuplotWrapper/GnuplotWrapper.h>
 #include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
 
 
