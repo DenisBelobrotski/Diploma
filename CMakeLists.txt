@@ -17,7 +17,7 @@ endif()
 
 set(LIBS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
-set(GNUPLOT_WRAPPER_ROOT ${LIBS_ROOT}/GNUPlotWrapper)
+set(GNUPLOT_WRAPPER_ROOT ${LIBS_ROOT}/GnuplotWrapper)
 set(MAGNETIC_FLUID_FORM_ALGORITHM_ROOT ${LIBS_ROOT}/MagneticFluidFormAlgorithm)
 
 include_directories(
@@ -31,4 +31,4 @@ file(GLOB_RECURSE proj_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
 add_executable (Diploma ${proj_sources})
 
-target_link_libraries(Diploma GNUPlotWrapper MagneticFluidFormAlgorithm)
+target_link_libraries(Diploma GnuplotWrapper MagneticFluidFormAlgorithm)
