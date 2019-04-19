@@ -189,7 +189,6 @@ void algorithm::DifferenceMethod::decreaseParameter(double &parameter, double ta
 void algorithm::DifferenceMethod::runExperiment(long long drawRate)
 {
     runIterationProcess();
-    utils::clearProgressBar();
 
     pushExperimentResults(drawRate);
 
@@ -278,4 +277,17 @@ void algorithm::DifferenceMethod::setIsNeedResetTau(bool isNeedResetTau)
 bool algorithm::DifferenceMethod::getIsNeedResetTau()
 {
     return isNeedResetTau;
+}
+
+
+void algorithm::DifferenceMethod::setIterationFinishedCallback(
+        std::function<void(long long, long long)>* iterationFinishedCallback)
+{
+    this->iterationFinishedCallback = iterationFinishedCallback;
+}
+
+
+std::function<void(long long, long long)>* algorithm::DifferenceMethod::getIterationFinishedCallback()
+{
+    return iterationFinishedCallback;
 }

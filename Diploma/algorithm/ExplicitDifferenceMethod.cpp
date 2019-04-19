@@ -1,7 +1,7 @@
 #include "ExplicitDifferenceMethod.h"
 #include "Formulas.h"
-#include "../utils/Utils.h"
 #include "Exceptions.h"
+#include "MathUtils.h"
 
 
 algorithm::ExplicitDifferenceMethod::ExplicitDifferenceMethod() : DifferenceMethod()
@@ -114,8 +114,8 @@ void algorithm::ExplicitDifferenceMethod::runIterationProcess() noexcept(false)
 
         calcIteration();
 
-        residual = std::max(utils::calcResidual(prevR, variables.r),
-                            utils::calcResidual(prevZ, variables.z));
+        residual = std::max(calcResidual(prevR, variables.r),
+                            calcResidual(prevZ, variables.z));
 
         iterationsCounter++;
 
@@ -125,13 +125,15 @@ void algorithm::ExplicitDifferenceMethod::runIterationProcess() noexcept(false)
         }
         else
         {
-            utils::showIterationsProgressBar(iterationsCounter - startIterationsCounter, MAX_ITERATIONS_NUMBER);
+            if (iterationFinishedCallback != nullptr)
+            {
+                (*iterationFinishedCallback)(iterationsCounter - startIterationsCounter, MAX_ITERATIONS_NUMBER);
+            }
         }
     } while (residual > ACCURACY);
 
-    if (!utils::isValid(variables.r) || !utils::isValid(variables.z))
+    if (!isValid(variables.r) || !isValid(variables.z))
     {
-        utils::clearProgressBar();
         throw InvalidResultException();
     }
 }

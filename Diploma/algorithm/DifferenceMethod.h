@@ -5,6 +5,7 @@
 #include <vector>
 #include <math.h>
 #include <string>
+#include <functional>
 
 
 namespace algorithm
@@ -60,6 +61,7 @@ namespace algorithm
         Variables variables;
         long long iterationsCounter;
         long long experimentsCounter;
+        std::function<void(long long, long long)>* iterationFinishedCallback;
 
     private:
         std::vector<Variables> *experimentVariables;
@@ -79,6 +81,10 @@ namespace algorithm
         void setIsNeedResetTau(bool isNeedResetTau);
 
         bool getIsNeedResetTau();
+
+        void setIterationFinishedCallback(std::function<void(long long, long long)>* iterationFinishedCallback);
+
+        std::function<void(long long, long long)>* getIterationFinishedCallback();
 
     protected:
         DifferenceMethod();

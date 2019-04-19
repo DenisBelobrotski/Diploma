@@ -19,3 +19,7 @@ double algorithm::ParameterNotReachTargetValue::getTargetValue()
 {
     return targetValue;
 }
+
+algorithm::VectorSizeException::VectorSizeException() : runtime_error("VectorSizeException") {}
+
+algorithm::VectorSizeException::VectorSizeException(const char *msg) : runtime_error(msg) {}

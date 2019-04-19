@@ -31,4 +31,14 @@ namespace algorithm
 
         double getTargetValue();
     };
+
+    class VectorSizeException : public std::runtime_error
+    {
+
+    public:
+        VectorSizeException();
+
+        explicit VectorSizeException(const char *msg);
+
+    };
 }
