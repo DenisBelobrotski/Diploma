@@ -1,0 +1,63 @@
+{
+    "plotConfig": {
+        "windowWidth": 1600,
+        "windowHeight": 900,
+        "title": "Tangential method",
+        "xAxisName": "Radius",
+        "yAxisName": "Height",
+        "legendFontSize": 8,
+        "axesRanges": {
+            "xAxisRange": {
+                "start": 0,
+                "end": 8
+            },
+            "yAxisRange": {
+                "start": 0,
+                "end": 6
+            }
+        },
+        "equalAxes": true,
+        "outputType": 0,
+        "outputFilePath": null
+    },
+    "algorithmConfig": {
+        "calculationsSequence": [
+            {
+                "parameterName": "U",
+                "targetValue": 101,
+                "step": 1,
+                "drawRate": -2
+            },
+            {
+                "parameterName": "A2",
+                "targetValue": 1,
+                "step": 0.05,
+                "drawRate": -2
+            },
+            {
+                "parameterName": "A2",
+                "targetValue": 3,
+                "step": 0.05,
+                "drawRate": -1
+            },
+            {
+                "parameterName": "A1",
+                "targetValue": 3,
+                "step": 0.1,
+                "drawRate": -1
+            },
+            {
+                "parameterName": "A1",
+                "targetValue": 1,
+                "step": 0.1,
+                "drawRate": -1
+            },
+            {
+                "parameterName": "A1",
+                "targetValue": 0,
+                "step": 0.1,
+                "drawRate": -1
+            }
+        ]
+    }
+}
