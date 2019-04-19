@@ -16,7 +16,8 @@ namespace plot
 
     public:
         PipeException();
-        explicit PipeException(const char * msg);
+
+        explicit PipeException(const char *msg);
 
     };
 
@@ -25,7 +26,8 @@ namespace plot
 
     public:
         VectorSizeException();
-        explicit VectorSizeException(const char * msg);
+
+        explicit VectorSizeException(const char *msg);
 
     };
 

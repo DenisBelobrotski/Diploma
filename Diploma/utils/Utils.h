@@ -7,21 +7,21 @@
 
 namespace utils
 {
-	void printVector(std::ostream &os, std::vector<double> &vector);
+    void printVector(std::ostream &os, std::vector<double> &vector);
 
-	double calcResidual(std::vector<double> &vector1, std::vector<double> &vector2) noexcept(false);
+    double calcResidual(std::vector<double> &vector1, std::vector<double> &vector2) noexcept(false);
 
-	void pauseExecution();
+    void pauseExecution();
 
-	bool isValid(std::vector<double> &vals);
+    bool isValid(std::vector<double> &vals);
 
-	bool isValid(double val);
+    bool isValid(double val);
 
-	void showIterationsProgressBar(long long currentIteration, long long maxIteration);
+    void showIterationsProgressBar(long long currentIteration, long long maxIteration);
 
-	void showProgressBar(double currentProgress);
+    void showProgressBar(double currentProgress);
 
-	void terminateProgressBar();
+    void terminateProgressBar();
 
-	void clearProgressBar();
+    void clearProgressBar();
 }
