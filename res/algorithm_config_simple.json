@@ -1,0 +1,18 @@
+{
+    "algorithmConfig": {
+        "calculationsSequence": [
+            {
+                "parameterName": "U",
+                "targetValue": 101,
+                "step": 1,
+                "drawRate": -2
+            },
+            {
+                "parameterName": "A2",
+                "targetValue": 1,
+                "step": 0.05,
+                "drawRate": -1
+            }
+        ]
+    }
+}
