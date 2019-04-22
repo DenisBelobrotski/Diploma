@@ -1,0 +1,23 @@
+{
+    "plotConfig": {
+        "windowWidth": 1600,
+        "windowHeight": 900,
+        "title": "Tangential method",
+        "xAxisName": "Radius",
+        "yAxisName": "Height",
+        "legendFontSize": 8,
+        "axesRanges": {
+            "xAxisRange": {
+                "start": 0,
+                "end": 8
+            },
+            "yAxisRange": {
+                "start": 0,
+                "end": 6
+            }
+        },
+        "equalAxes": true,
+        "outputType": 0,
+        "outputFilePath": null
+    }
+}

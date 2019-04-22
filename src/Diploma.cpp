@@ -10,27 +10,27 @@
 #include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
 
 
-plot::Plot *configMagneticFluidPlot(
-        std::vector<algorithm::Variables> &iterationVariables, std::vector<algorithm::IterationInfo> &iterationsInfo,
+plot::Plot* configMagneticFluidPlot(
+        std::vector<algorithm::Variables>& iterationVariables, std::vector<algorithm::IterationInfo>& iterationsInfo,
         std::string title, plot::PlotOutputType outputType, std::string outputFilePath);
 
-plot::Plot *configAnglesPlot(
-        std::vector<algorithm::Variables> &iterationVariables, std::vector<algorithm::IterationInfo> &iterationsInfo);
+plot::Plot* configAnglesPlot(
+        std::vector<algorithm::Variables>& iterationVariables, std::vector<algorithm::IterationInfo>& iterationsInfo);
 
-void configPlotAxesRanges(plot::AxesRanges &axesRanges, std::vector<plot::Graph> &graphs);
+void configPlotAxesRanges(plot::AxesRanges& axesRanges, std::vector<plot::Graph>& graphs);
 
-plot::Plot *configComparisonPlot(
-        algorithm::Variables &oldIterationVariables, algorithm::IterationInfo &oldIterationInfo,
-        algorithm::Variables &newIterationVariables, algorithm::IterationInfo &newIterationInfo,
+plot::Plot* configComparisonPlot(
+        algorithm::Variables& oldIterationVariables, algorithm::IterationInfo& oldIterationInfo,
+        algorithm::Variables& newIterationVariables, algorithm::IterationInfo& newIterationInfo,
         std::string title, plot::PlotOutputType outputType, std::string outputFilePath);
 
 void fillGraphTitleStreamDefault(
-        std::stringstream &titleStream, std::string title, algorithm::IterationInfo &iterationInfo);
+        std::stringstream& titleStream, std::string title, algorithm::IterationInfo& iterationInfo);
 
-void configDefaultPlot(plot::PlotConfig &config);
+void configDefaultPlot(plot::PlotConfig& config);
 
-plot::Plot *createDefaultPlot(
-        std::vector<plot::Graph> *graphs, std::string title, plot::PlotOutputType outputType,
+plot::Plot* createDefaultPlot(
+        std::vector<plot::Graph>* graphs, std::string title, plot::PlotOutputType outputType,
         std::string outputFilePath);
 
 
@@ -44,9 +44,9 @@ int main()
         std::vector<algorithm::IterationInfo> implicitIterationsInfo;
         std::vector<algorithm::IterationInfo> explicitIterationsInfo;
 
-        algorithm::DifferenceMethod *implicitDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
+        algorithm::DifferenceMethod* implicitDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
                 &implicitExperimentVariables, &implicitIterationsInfo);
-        algorithm::DifferenceMethod *explicitDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
+        algorithm::DifferenceMethod* explicitDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
                 &explicitExperimentVariables, &explicitIterationsInfo);
 
         implicitDifferenceMethod->setIsNeedResetTau(false);
@@ -60,6 +60,14 @@ int main()
         implicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
         explicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
 
+        algorithm::AlgorithmConfigurator algorithmConfigurator;
+        std::vector<algorithm::TargetParameter>* targetParameters =
+                algorithmConfigurator.readAlgorithmSequenceFromFile(
+                        "../res/algorithm_config_full.json", algorithm::ConfigFileTypeJson);
+
+        implicitDifferenceMethod->setTargetParameters(targetParameters);
+        explicitDifferenceMethod->setTargetParameters(targetParameters);
+
         std::cout << "*****Algorithms info*****" << std::endl;
 
         std::cout << "Difference scheme: " << std::endl << std::endl;
@@ -68,13 +76,13 @@ int main()
         std::cout << "Angles: " << std::endl;
         explicitDifferenceMethod->calcResult();
 
-        plot::Plot *implicitMethodPlot = configMagneticFluidPlot(
+        plot::Plot* implicitMethodPlot = configMagneticFluidPlot(
                 implicitExperimentVariables, implicitIterationsInfo, "Finite-difference method",
                 plot::PlotOutputTypeWindow, "");
-        plot::Plot *explicitMethodPlot = configMagneticFluidPlot(
+        plot::Plot* explicitMethodPlot = configMagneticFluidPlot(
                 explicitExperimentVariables, explicitIterationsInfo, "Tangential method", plot::PlotOutputTypeWindow,
                 "");
-        plot::Plot *comparisonPlot = configComparisonPlot(
+        plot::Plot* comparisonPlot = configComparisonPlot(
                 implicitExperimentVariables.back(), implicitIterationsInfo.back(), explicitExperimentVariables.back(),
                 explicitIterationsInfo.back(), "Comparison", plot::PlotOutputTypeWindow, "");
 
@@ -90,9 +98,9 @@ int main()
             auto currentNewIteration = explicitIterationsInfo[i].index;
 
             double radiusResidual = algorithm::calcResidual(implicitExperimentVariables[currentOldIteration].r,
-                                                        explicitExperimentVariables[currentNewIteration].r);
+                                                            explicitExperimentVariables[currentNewIteration].r);
             double heightResidual = algorithm::calcResidual(implicitExperimentVariables[currentOldIteration].z,
-                                                        explicitExperimentVariables[currentNewIteration].z);
+                                                            explicitExperimentVariables[currentNewIteration].z);
             double commonResidual = std::max(radiusResidual, heightResidual);
 
             std::cout << "Experiment number:" << std::endl;
@@ -110,15 +118,15 @@ int main()
         delete implicitMethodPlot;
         delete comparisonPlot;
     }
-    catch (plot::PipeException &e)
+    catch (plot::PipeException& e)
     {
         std::cerr << e.what() << std::endl;
     }
-    catch (plot::VectorSizeException &e)
+    catch (plot::VectorSizeException& e)
     {
         std::cerr << e.what() << std::endl;
     }
-    catch (std::runtime_error &e)
+    catch (std::runtime_error& e)
     {
         std::cerr << e.what() << std::endl;
     }
@@ -127,8 +135,8 @@ int main()
 }
 
 
-plot::Plot *configMagneticFluidPlot(
-        std::vector<algorithm::Variables> &iterationVariables, std::vector<algorithm::IterationInfo> &iterationsInfo,
+plot::Plot* configMagneticFluidPlot(
+        std::vector<algorithm::Variables>& iterationVariables, std::vector<algorithm::IterationInfo>& iterationsInfo,
         std::string title, plot::PlotOutputType outputType, std::string outputFilePath)
 {
     auto graphs = new std::vector<plot::Graph>();
@@ -157,19 +165,19 @@ plot::Plot *configMagneticFluidPlot(
 }
 
 
-plot::Plot *configAnglesPlot(
-        std::vector<algorithm::Variables> &iterationVariables, std::vector<algorithm::IterationInfo> &iterationsInfo)
+plot::Plot* configAnglesPlot(
+        std::vector<algorithm::Variables>& iterationVariables, std::vector<algorithm::IterationInfo>& iterationsInfo)
 {
     return nullptr;
 }
 
 
-void configPlotAxesRanges(plot::AxesRanges &axesRanges, std::vector<plot::Graph> &graphs)
+void configPlotAxesRanges(plot::AxesRanges& axesRanges, std::vector<plot::Graph>& graphs)
 {
 
-    for (auto &currentGraph : graphs)
+    for (auto& currentGraph : graphs)
     {
-        for (auto &currentPoint : currentGraph.points)
+        for (auto& currentPoint : currentGraph.points)
         {
             axesRanges.xAxisRange.end = std::max(axesRanges.xAxisRange.end, currentPoint.x);
             axesRanges.yAxisRange.end = std::max(axesRanges.yAxisRange.end, currentPoint.y);
@@ -180,9 +188,9 @@ void configPlotAxesRanges(plot::AxesRanges &axesRanges, std::vector<plot::Graph>
 }
 
 
-plot::Plot *configComparisonPlot(
-        algorithm::Variables &oldIterationVariables, algorithm::IterationInfo &oldIterationInfo,
-        algorithm::Variables &newIterationVariables, algorithm::IterationInfo &newIterationInfo,
+plot::Plot* configComparisonPlot(
+        algorithm::Variables& oldIterationVariables, algorithm::IterationInfo& oldIterationInfo,
+        algorithm::Variables& newIterationVariables, algorithm::IterationInfo& newIterationInfo,
         std::string title, plot::PlotOutputType outputType, std::string outputFilePath)
 {
     auto graphs = new std::vector<plot::Graph>();
@@ -220,7 +228,7 @@ plot::Plot *configComparisonPlot(
 
 
 void fillGraphTitleStreamDefault(
-        std::stringstream &titleStream, std::string title, algorithm::IterationInfo &iterationInfo)
+        std::stringstream& titleStream, std::string title, algorithm::IterationInfo& iterationInfo)
 {
     titleStream << title << " - "
                 << "TAU: " << iterationInfo.tau
@@ -232,7 +240,7 @@ void fillGraphTitleStreamDefault(
 }
 
 
-void configDefaultPlot(plot::PlotConfig &config)
+void configDefaultPlot(plot::PlotConfig& config)
 {
     config.windowWidth = 1600;
     config.windowHeight = 900;
@@ -243,8 +251,8 @@ void configDefaultPlot(plot::PlotConfig &config)
 }
 
 
-plot::Plot *createDefaultPlot(
-        std::vector<plot::Graph> *graphs, std::string title, plot::PlotOutputType outputType,
+plot::Plot* createDefaultPlot(
+        std::vector<plot::Graph>* graphs, std::string title, plot::PlotOutputType outputType,
         std::string outputFilePath)
 {
     plot::AxesRanges axesRanges{plot::Range(1, 0), plot::Range(0, 0)};
