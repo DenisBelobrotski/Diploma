@@ -1,5 +1,16 @@
 {
     "algorithmConfig": {
+        "nodesNumber": 100,
+        "targetAccuracy": 1E-5,
+        "maxIterationsNumber": 10000,
+        "minRelaxationParameter": 0.05,
+        "relaxationMultiplier": 0.5,
+        "initialTAU": 1,
+        "initialU": 3,
+        "initialB0": 1,
+        "initialA1": 6,
+        "initialA2": 0.05,
+        "initialALPHA": 0.78539816339744830962,
         "calculationsSequence": [
             {
                 "parameterName": "U",
