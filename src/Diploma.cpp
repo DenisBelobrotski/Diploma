@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cmath>
 #include <chrono>
+#include <future>
 
 #include <GnuplotWrapper/GnuplotWrapper.h>
 #include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
@@ -52,6 +53,10 @@ void calcResiduals(
         std::vector<algorithm::Variables>& explicitExperimentVariables,
         std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
         std::vector<algorithm::IterationInfo>& explicitIterationsInfo);
+
+void printTotalDuration(
+        std::chrono::time_point<std::chrono::system_clock>& start,
+        std::chrono::time_point<std::chrono::system_clock>& end);
 
 
 int main()
@@ -254,22 +259,51 @@ void calcResults(
 
     start = std::chrono::system_clock::now();
 
-    std::cout << "Finite-difference method: " << std::endl << std::endl;
-    implicitDifferenceMethod->calcResult();
+    std::future<void> implicitDifferenceMethodCalculation(std::async(
+            [&implicitDifferenceMethod]()
+            {
+                std::chrono::time_point<std::chrono::system_clock> start;
+                std::chrono::time_point<std::chrono::system_clock> end;
 
-    std::cout << "Tangential method: " << std::endl;
-    explicitDifferenceMethod->calcResult();
+                start = std::chrono::system_clock::now();
+
+                std::cout << "Finite-difference method (start): " << std::endl << std::endl;
+
+                implicitDifferenceMethod->calcResult();
+
+                end = std::chrono::system_clock::now();
+
+                std::cout << "Finite-difference method (finish): " << std::endl;
+                printTotalDuration(start, end);
+            }));
+
+    std::future<void> explicitDifferenceMethodCalculation(std::async(
+            [&explicitDifferenceMethod]()
+            {
+                std::chrono::time_point<std::chrono::system_clock> start;
+                std::chrono::time_point<std::chrono::system_clock> end;
+
+                start = std::chrono::system_clock::now();
+
+                std::cout << "Tangential method (start): " << std::endl;
+                explicitDifferenceMethod->calcResult();
+
+                end = std::chrono::system_clock::now();
+
+                std::cout << "Tangential method (finish): " << std::endl;
+                printTotalDuration(start, end);
+            }));
+
+    implicitDifferenceMethodCalculation.get();
+    explicitDifferenceMethodCalculation.get();
 
     end = std::chrono::system_clock::now();
 
+    std::cout << "All calculations results: " << std::endl;
+    printTotalDuration(start, end);
+
     delete implicitDifferenceMethod;
     delete explicitDifferenceMethod;
-
-    auto totalCalculationsTimeMillis = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    auto totalCalculationsTimeSecs = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
-
-    std::cout << "***Total calculations time: " << totalCalculationsTimeMillis << " ms." << " ("
-              << totalCalculationsTimeSecs << " sec.)" << std::endl;
 }
 
 
@@ -332,4 +366,16 @@ void calcResiduals(
         std::cout << "common: " << commonResidual << std::endl;
         std::cout << "************************" << std::endl;
     }
+}
+
+
+void printTotalDuration(
+        std::chrono::time_point<std::chrono::system_clock>& start,
+        std::chrono::time_point<std::chrono::system_clock>& end)
+{
+    auto totalCalculationsTimeMillis = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    auto totalCalculationsTimeSecs = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+
+    std::cout << "Total calculations time: " << totalCalculationsTimeMillis << " ms." << " ("
+              << totalCalculationsTimeSecs << " sec.)" << std::endl;
 }
