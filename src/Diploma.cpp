@@ -67,15 +67,12 @@ void calcResults(
         std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
         std::vector<algorithm::IterationInfo>& explicitIterationsInfo)
 {
-    algorithm::InitialParameters initialParameters {10};
+    algorithm::InitialParameters initialParameters{200, 1E-5, 30000, 0.05, 0.5, 1, 3, 1, 6, 0.05, M_PI_4};
 
     algorithm::DifferenceMethod* implicitDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
-            &implicitExperimentVariables, &implicitIterationsInfo);
+            &implicitExperimentVariables, &implicitIterationsInfo, &initialParameters);
     algorithm::DifferenceMethod* explicitDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
-            &explicitExperimentVariables, &explicitIterationsInfo);
-
-    implicitDifferenceMethod->setInitialParameters(&initialParameters);
-    explicitDifferenceMethod->setInitialParameters(&initialParameters);
+            &explicitExperimentVariables, &explicitIterationsInfo, &initialParameters);
 
     implicitDifferenceMethod->setIsNeedResetTau(false);
     explicitDifferenceMethod->setIsNeedResetTau(false);
