@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GnuplotWrapper/GnuplotWrapper.h>
-#include <MagneticFluidFormAlgorithm/MagneticFluidFormAlgorithm.h>
+#include <MagneticFluidFormAlgorithm/DifferenceMethod.h>
 
 
 plot::Plot* configMagneticFluidPlot(
