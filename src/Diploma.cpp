@@ -6,6 +6,14 @@
 #include <chrono>
 #include <future>
 
+#include <MagneticFluidFormAlgorithm/AlgorithmConfigurator.h>
+#include <MagneticFluidFormAlgorithm/DifferenceMethod.h>
+#include <MagneticFluidFormAlgorithm/ExplicitDifferenceMethod.h>
+#include <MagneticFluidFormAlgorithm/ImplicitDifferenceMethod.h>
+#include <MagneticFluidFormAlgorithm/ExplicitMethodUniformConcentration.h>
+#include <MagneticFluidFormAlgorithm/ImplicitMethodUniformConcentration.h>
+#include <MagneticFluidFormAlgorithm/MathUtils.h>
+
 
 void calcResults(
         std::vector<algorithm::Variables>& implicitExperimentVariables,
@@ -67,12 +75,17 @@ void calcResults(
         std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
         std::vector<algorithm::IterationInfo>& explicitIterationsInfo)
 {
-    algorithm::InitialParameters initialParameters{200, 1E-5, 30000, 0.05, 0.5, 1, 3, 1, 6, 0.05, M_PI_4};
+    algorithm::AlgorithmConfigurator algorithmConfigurator(
+            "../res/algorithm_config_full.json", algorithm::ConfigFileTypeJson);
+
+    algorithm::InitialParameters* initialParameters = algorithmConfigurator.readAlgorithmInitialParameters();
+
+    std::vector<algorithm::TargetParameter>* targetParameters = algorithmConfigurator.readAlgorithmSequenceFromFile();
 
     algorithm::DifferenceMethod* implicitDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
-            &implicitExperimentVariables, &implicitIterationsInfo, &initialParameters);
+            &implicitExperimentVariables, &implicitIterationsInfo, initialParameters);
     algorithm::DifferenceMethod* explicitDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
-            &explicitExperimentVariables, &explicitIterationsInfo, &initialParameters);
+            &explicitExperimentVariables, &explicitIterationsInfo, initialParameters);
 
     implicitDifferenceMethod->setIsNeedResetTau(false);
     explicitDifferenceMethod->setIsNeedResetTau(false);
@@ -84,11 +97,6 @@ void calcResults(
             };
     implicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
     explicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
-
-    algorithm::AlgorithmConfigurator algorithmConfigurator;
-    std::vector<algorithm::TargetParameter>* targetParameters =
-            algorithmConfigurator.readAlgorithmSequenceFromFile(
-                    "../res/algorithm_config_full.json", algorithm::ConfigFileTypeJson);
 
     implicitDifferenceMethod->setTargetParameters(targetParameters);
     explicitDifferenceMethod->setTargetParameters(targetParameters);
@@ -145,6 +153,8 @@ void calcResults(
 
     delete implicitDifferenceMethod;
     delete explicitDifferenceMethod;
+    delete targetParameters;
+    delete initialParameters;
 }
 
 
