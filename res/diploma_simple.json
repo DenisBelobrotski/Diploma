@@ -25,5 +25,10 @@
                 "drawRate": -1
             }
         ]
+    },
+    "diplomaConfig": {
+        "isNonUniformConcentration": true,
+        "isNeedCalculateResiduals": true,
+        "isNeedMakeComparisonPlot": true
     }
 }

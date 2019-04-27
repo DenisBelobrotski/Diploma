@@ -35,14 +35,15 @@ void calcResiduals(
         std::vector<algorithm::IterationInfo>& explicitIterationsInfo);
 
 void printTotalDuration(
-        std::chrono::time_point<std::chrono::system_clock>& start,
-        std::chrono::time_point<std::chrono::system_clock>& end);
+        std::chrono::time_point<std::chrono::steady_clock>& start,
+        std::chrono::time_point<std::chrono::steady_clock>& end);
 
 
 int main()
 {
     try
     {
+        const bool isNeedCalculateResiduals = false;
         std::vector<algorithm::Variables> implicitExperimentVariables;
         std::vector<algorithm::Variables> explicitExperimentVariables;
 
@@ -53,9 +54,12 @@ int main()
                 implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
                 explicitIterationsInfo);
 
-        calcResiduals(
-                implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
-                explicitIterationsInfo);
+        if (isNeedCalculateResiduals)
+        {
+            calcResiduals(
+                    implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
+                    explicitIterationsInfo);
+        }
 
         makePlots(implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
                   explicitIterationsInfo, true);
@@ -63,6 +67,7 @@ int main()
     catch (std::runtime_error& e)
     {
         std::cerr << e.what() << std::endl;
+        utils::pauseExecution();
     }
 
     return 0;
@@ -76,7 +81,7 @@ void calcResults(
         std::vector<algorithm::IterationInfo>& explicitIterationsInfo)
 {
     algorithm::AlgorithmConfigurator algorithmConfigurator(
-            "../res/algorithm_config_full.json", algorithm::ConfigFileTypeJson);
+            "../res/diploma_90_grad.json", algorithm::ConfigFileTypeJson);
 
     algorithm::InitialParameters* initialParameters = algorithmConfigurator.readAlgorithmInitialParameters();
 
@@ -103,24 +108,24 @@ void calcResults(
 
     std::cout << "*****Algorithms info*****" << std::endl;
 
-    std::chrono::time_point<std::chrono::system_clock> start;
-    std::chrono::time_point<std::chrono::system_clock> end;
+    std::chrono::time_point<std::chrono::steady_clock> start;
+    std::chrono::time_point<std::chrono::steady_clock> end;
 
-    start = std::chrono::system_clock::now();
+    start = std::chrono::steady_clock::now();
 
     std::future<void> implicitDifferenceMethodCalculation(std::async(
             [&implicitDifferenceMethod]()
             {
-                std::chrono::time_point<std::chrono::system_clock> start;
-                std::chrono::time_point<std::chrono::system_clock> end;
+                std::chrono::time_point<std::chrono::steady_clock> start;
+                std::chrono::time_point<std::chrono::steady_clock> end;
 
-                start = std::chrono::system_clock::now();
+                start = std::chrono::steady_clock::now();
 
                 std::cout << "Finite-difference method (start): " << std::endl << std::endl;
 
                 implicitDifferenceMethod->calcResult();
 
-                end = std::chrono::system_clock::now();
+                end = std::chrono::steady_clock::now();
 
                 std::cout << "Finite-difference method (finish): " << std::endl;
                 printTotalDuration(start, end);
@@ -129,15 +134,15 @@ void calcResults(
     std::future<void> explicitDifferenceMethodCalculation(std::async(
             [&explicitDifferenceMethod]()
             {
-                std::chrono::time_point<std::chrono::system_clock> start;
-                std::chrono::time_point<std::chrono::system_clock> end;
+                std::chrono::time_point<std::chrono::steady_clock> start;
+                std::chrono::time_point<std::chrono::steady_clock> end;
 
-                start = std::chrono::system_clock::now();
+                start = std::chrono::steady_clock::now();
 
                 std::cout << "Tangential method (start): " << std::endl;
                 explicitDifferenceMethod->calcResult();
 
-                end = std::chrono::system_clock::now();
+                end = std::chrono::steady_clock::now();
 
                 std::cout << "Tangential method (finish): " << std::endl;
                 printTotalDuration(start, end);
@@ -146,7 +151,7 @@ void calcResults(
     implicitDifferenceMethodCalculation.get();
     explicitDifferenceMethodCalculation.get();
 
-    end = std::chrono::system_clock::now();
+    end = std::chrono::steady_clock::now();
 
     std::cout << "All calculations results: " << std::endl;
     printTotalDuration(start, end);
@@ -165,19 +170,26 @@ void makePlots(
         std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
         bool needPauseExecution)
 {
+    const bool isNeedMakeComparisonPlot = false;
+
     plot::Plot* implicitMethodPlot = configMagneticFluidPlot(
             implicitExperimentVariables, implicitIterationsInfo, "Finite-difference method",
             plot::PlotOutputTypeWindow, "");
+    implicitMethodPlot->makeGraphs();
+
     plot::Plot* explicitMethodPlot = configMagneticFluidPlot(
             explicitExperimentVariables, explicitIterationsInfo, "Tangential method", plot::PlotOutputTypeWindow,
             "");
+    explicitMethodPlot->makeGraphs();
+
     plot::Plot* comparisonPlot = configComparisonPlot(
             implicitExperimentVariables.back(), implicitIterationsInfo.back(), explicitExperimentVariables.back(),
             explicitIterationsInfo.back(), "Comparison", plot::PlotOutputTypeWindow, "");
 
-    implicitMethodPlot->makeGraphs();
-    explicitMethodPlot->makeGraphs();
-    comparisonPlot->makeGraphs();
+    if (isNeedMakeComparisonPlot)
+    {
+        comparisonPlot->makeGraphs();
+    }
 
     if (needPauseExecution)
     {
@@ -221,12 +233,18 @@ void calcResiduals(
 
 
 void printTotalDuration(
-        std::chrono::time_point<std::chrono::system_clock>& start,
-        std::chrono::time_point<std::chrono::system_clock>& end)
+        std::chrono::time_point<std::chrono::steady_clock>& start,
+        std::chrono::time_point<std::chrono::steady_clock>& end)
 {
-    auto totalCalculationsTimeMillis = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-    auto totalCalculationsTimeSecs = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+    auto totalCalculationsTimeMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    auto totalCalculationsTimeSeconds = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+    auto totalCalculationsTimeMinutes = std::chrono::duration_cast<std::chrono::minutes>(end - start).count();
+    auto totalCalculationsTimeHours = std::chrono::duration_cast<std::chrono::hours>(end - start).count();
 
-    std::cout << "Total calculations time: " << totalCalculationsTimeMillis << " ms." << " ("
-              << totalCalculationsTimeSecs << " sec.)" << std::endl;
+    std::cout << "Total calculations time: " << totalCalculationsTimeMilliseconds << " ms."
+              << " ("
+              << totalCalculationsTimeSeconds << " sec."
+              << ", " << totalCalculationsTimeMinutes << "min."
+              << ", " << totalCalculationsTimeHours << "h."
+              << ")" << std::endl;
 }
