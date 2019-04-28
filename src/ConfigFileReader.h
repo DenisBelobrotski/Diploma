@@ -9,6 +9,7 @@ namespace diploma
     const auto IS_NON_UNIFORM_CONCENTRATION_KEY = "isNonUniformConcentration";
     const auto IS_NEED_CALCULATE_RESIDUALS_KEY = "isNeedCalculateResiduals";
     const auto IS_NEED_MAKE_COMPARISON_PLOT_KEY = "isNeedMakeComparisonPlot";
+    const auto IS_COMPARISON_UNIFORM_NON_UNIFORM = "isComparisonUniformNonUniform";
 
 
     class ConfigFileReader
@@ -25,5 +26,7 @@ namespace diploma
         virtual bool isNeedCalculateResiduals() = 0;
 
         virtual bool isNeedMakeComparisonPlot() = 0;
+
+        virtual bool isComparisonUniformNonUniform() = 0;
     };
 }

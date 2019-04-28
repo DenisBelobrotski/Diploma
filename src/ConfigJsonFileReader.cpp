@@ -96,3 +96,18 @@ bool diploma::ConfigJsonFileReader::isNeedMakeComparisonPlot()
 
     return result;
 }
+
+
+bool diploma::ConfigJsonFileReader::isComparisonUniformNonUniform()
+{
+    auto diplomaConfigObject = (*document)[DIPLOMA_CONFIG_KEY].GetObject();
+
+    bool result = false;
+
+    if (diplomaConfigObject.HasMember(IS_COMPARISON_UNIFORM_NON_UNIFORM))
+    {
+        result = diplomaConfigObject[IS_COMPARISON_UNIFORM_NON_UNIFORM].GetBool();
+    }
+
+    return result;
+}

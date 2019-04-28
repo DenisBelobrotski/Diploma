@@ -65,11 +65,23 @@
                 "targetValue": 4.5,
                 "step": 0.05,
                 "drawRate": -1
+            },
+            {
+                "parameterName": "A2",
+                "targetValue": 5,
+                "step": 0.05,
+                "drawRate": -1
+            },
+            {
+                "parameterName": "A2",
+                "targetValue": 5.5,
+                "step": 0.05,
+                "drawRate": -1
             }
         ]
     },
     "diplomaConfig": {
         "isNeedPauseExecutionBeforeTermination": true,
-        "isNonUniformConcentration": true
+        "isNonUniformConcentration": false
     }
 }

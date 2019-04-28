@@ -24,5 +24,7 @@ namespace diploma
         bool isNeedCalculateResiduals() override;
 
         bool isNeedMakeComparisonPlot() override;
+
+        bool isComparisonUniformNonUniform() override;
     };
 }

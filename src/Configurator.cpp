@@ -48,3 +48,9 @@ bool diploma::Configurator::isNeedMakeComparisonPlot()
 {
     return configFileReader->isNeedMakeComparisonPlot();
 }
+
+
+bool diploma::Configurator::isComparisonUniformNonUniform()
+{
+    return configFileReader->isComparisonUniformNonUniform();
+}

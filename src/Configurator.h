@@ -31,5 +31,7 @@ namespace diploma
         bool isNeedCalculateResiduals();
 
         bool isNeedMakeComparisonPlot();
+
+        bool isComparisonUniformNonUniform();
     };
 }

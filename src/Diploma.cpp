@@ -18,27 +18,27 @@
 
 namespace diploma
 {
-    const auto CONFIG_FILE_PATH = "../res/diploma_full.json";
+    const auto CONFIG_FILE_PATH = "../res/diploma_90_grad_uniform.json";
 
     void calcResults(
-            std::vector<algorithm::Variables>& implicitExperimentVariables,
-            std::vector<algorithm::Variables>& explicitExperimentVariables,
-            std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-            std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
+            std::vector<algorithm::Variables>& firstExperimentVariables,
+            std::vector<algorithm::Variables>& secondExperimentVariables,
+            std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
+            std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo,
             Configurator& configurator);
 
     void makePlots(
-            std::vector<algorithm::Variables>& implicitExperimentVariables,
-            std::vector<algorithm::Variables>& explicitExperimentVariables,
-            std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-            std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
+            std::vector<algorithm::Variables>& firstExperimentVariables,
+            std::vector<algorithm::Variables>& secondExperimentVariables,
+            std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
+            std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo,
             Configurator& configurator);
 
     void calcResiduals(
-            std::vector<algorithm::Variables>& implicitExperimentVariables,
-            std::vector<algorithm::Variables>& explicitExperimentVariables,
-            std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-            std::vector<algorithm::IterationInfo>& explicitIterationsInfo);
+            std::vector<algorithm::Variables>& firstExperimentVariables,
+            std::vector<algorithm::Variables>& secondExperimentVariables,
+            std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
+            std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo);
 
     void printTotalDuration(
             std::chrono::time_point<std::chrono::steady_clock>& start,
@@ -83,10 +83,10 @@ int main()
 
 
 void diploma::calcResults(
-        std::vector<algorithm::Variables>& implicitExperimentVariables,
-        std::vector<algorithm::Variables>& explicitExperimentVariables,
-        std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-        std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
+        std::vector<algorithm::Variables>& firstExperimentVariables,
+        std::vector<algorithm::Variables>& secondExperimentVariables,
+        std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
+        std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo,
         Configurator& configurator)
 {
     algorithm::AlgorithmConfigurator algorithmConfigurator(diploma::CONFIG_FILE_PATH, algorithm::ConfigFileTypeJson);
@@ -95,37 +95,44 @@ void diploma::calcResults(
 
     std::vector<algorithm::TargetParameter>* targetParameters = algorithmConfigurator.readAlgorithmSequenceFromFile();
 
-    algorithm::DifferenceMethod* implicitDifferenceMethod = nullptr;
-    algorithm::DifferenceMethod* explicitDifferenceMethod = nullptr;
+    algorithm::DifferenceMethod* firstDifferenceMethod = nullptr;
+    algorithm::DifferenceMethod* secondDifferenceMethod = nullptr;
 
-    if (configurator.isNonUniformConcentration())
+    if (configurator.isComparisonUniformNonUniform())
     {
-        implicitDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
-                &implicitExperimentVariables, &implicitIterationsInfo, initialParameters);
-        explicitDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
-                &explicitExperimentVariables, &explicitIterationsInfo, initialParameters);
+        firstDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
+                &firstExperimentVariables, &firstExperimentIterationsInfo, initialParameters);
+        secondDifferenceMethod = new algorithm::ImplicitMethodUniformConcentration(
+                &secondExperimentVariables, &secondExperimentIterationsInfo, initialParameters);
+    }
+    else if (configurator.isNonUniformConcentration())
+    {
+        firstDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
+                &firstExperimentVariables, &firstExperimentIterationsInfo, initialParameters);
+        secondDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
+                &secondExperimentVariables, &secondExperimentIterationsInfo, initialParameters);
     }
     else
     {
-        implicitDifferenceMethod = new algorithm::ImplicitMethodUniformConcentration(
-                &implicitExperimentVariables, &implicitIterationsInfo, initialParameters);
-        explicitDifferenceMethod = new algorithm::ExplicitMethodUniformConcentration(
-                &explicitExperimentVariables, &explicitIterationsInfo, initialParameters);
+        firstDifferenceMethod = new algorithm::ImplicitMethodUniformConcentration(
+                &firstExperimentVariables, &firstExperimentIterationsInfo, initialParameters);
+        secondDifferenceMethod = new algorithm::ExplicitMethodUniformConcentration(
+                &secondExperimentVariables, &secondExperimentIterationsInfo, initialParameters);
     }
 
-    implicitDifferenceMethod->setIsNeedResetTau(false);
-    explicitDifferenceMethod->setIsNeedResetTau(false);
+    firstDifferenceMethod->setIsNeedResetTau(false);
+    secondDifferenceMethod->setIsNeedResetTau(false);
 
     std::function<void(long long, long long)> showIterationsProgressBarFunction =
             [](long long currentIteration, long long maxIterations)
             {
                 diploma::showIterationsProgressBar(currentIteration, maxIterations);
             };
-    implicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
-    explicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
+    firstDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
+    secondDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
 
-    implicitDifferenceMethod->setTargetParameters(targetParameters);
-    explicitDifferenceMethod->setTargetParameters(targetParameters);
+    firstDifferenceMethod->setTargetParameters(targetParameters);
+    secondDifferenceMethod->setTargetParameters(targetParameters);
 
     std::cout << "*****Algorithms info*****" << std::endl;
 
@@ -135,37 +142,37 @@ void diploma::calcResults(
     start = std::chrono::steady_clock::now();
 
     std::future<void> implicitDifferenceMethodCalculation(std::async(
-            [&implicitDifferenceMethod]()
+            [&firstDifferenceMethod]()
             {
                 std::chrono::time_point<std::chrono::steady_clock> start;
                 std::chrono::time_point<std::chrono::steady_clock> end;
 
                 start = std::chrono::steady_clock::now();
 
-                std::cout << "Finite-difference method (start): " << std::endl << std::endl;
+                std::cout << "First experiment (start): " << std::endl << std::endl;
 
-                implicitDifferenceMethod->calcResult();
+                firstDifferenceMethod->calcResult();
 
                 end = std::chrono::steady_clock::now();
 
-                std::cout << "Finite-difference method (finish): " << std::endl;
+                std::cout << "First experiment (finish): " << std::endl;
                 printTotalDuration(start, end);
             }));
 
     std::future<void> explicitDifferenceMethodCalculation(std::async(
-            [&explicitDifferenceMethod]()
+            [&secondDifferenceMethod]()
             {
                 std::chrono::time_point<std::chrono::steady_clock> start;
                 std::chrono::time_point<std::chrono::steady_clock> end;
 
                 start = std::chrono::steady_clock::now();
 
-                std::cout << "Tangential method (start): " << std::endl;
-                explicitDifferenceMethod->calcResult();
+                std::cout << "Second experiment (start): " << std::endl;
+                secondDifferenceMethod->calcResult();
 
                 end = std::chrono::steady_clock::now();
 
-                std::cout << "Tangential method (finish): " << std::endl;
+                std::cout << "Second experiment (finish): " << std::endl;
                 printTotalDuration(start, end);
             }));
 
@@ -177,33 +184,33 @@ void diploma::calcResults(
     std::cout << "All calculations results: " << std::endl;
     printTotalDuration(start, end);
 
-    delete implicitDifferenceMethod;
-    delete explicitDifferenceMethod;
+    delete firstDifferenceMethod;
+    delete secondDifferenceMethod;
     delete targetParameters;
     delete initialParameters;
 }
 
 
 void diploma::makePlots(
-        std::vector<algorithm::Variables>& implicitExperimentVariables,
-        std::vector<algorithm::Variables>& explicitExperimentVariables,
-        std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-        std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
+        std::vector<algorithm::Variables>& firstExperimentVariables,
+        std::vector<algorithm::Variables>& secondExperimentVariables,
+        std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
+        std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo,
         Configurator& configurator)
 {
-    plot::Plot* implicitMethodPlot = configMagneticFluidPlot(
-            implicitExperimentVariables, implicitIterationsInfo, "Finite-difference method",
+    plot::Plot* firstExperimentPlot = configMagneticFluidPlot(
+            firstExperimentVariables, firstExperimentIterationsInfo, "First experiment",
             plot::PlotOutputTypeWindow, "");
-    implicitMethodPlot->makeGraphs();
+    firstExperimentPlot->makeGraphs();
 
-    plot::Plot* explicitMethodPlot = configMagneticFluidPlot(
-            explicitExperimentVariables, explicitIterationsInfo, "Tangential method", plot::PlotOutputTypeWindow,
+    plot::Plot* secondExperimentPlot = configMagneticFluidPlot(
+            secondExperimentVariables, secondExperimentIterationsInfo, "Second experiment", plot::PlotOutputTypeWindow,
             "");
-    explicitMethodPlot->makeGraphs();
+    secondExperimentPlot->makeGraphs();
 
     plot::Plot* comparisonPlot = configComparisonPlot(
-            implicitExperimentVariables.back(), implicitIterationsInfo.back(), explicitExperimentVariables.back(),
-            explicitIterationsInfo.back(), "Comparison", plot::PlotOutputTypeWindow, "");
+            firstExperimentVariables.back(), firstExperimentIterationsInfo.back(), secondExperimentVariables.back(),
+            secondExperimentIterationsInfo.back(), "Comparison", plot::PlotOutputTypeWindow, "");
 
     if (configurator.isNeedMakeComparisonPlot())
     {
@@ -215,34 +222,34 @@ void diploma::makePlots(
         diploma::pauseExecution();
     }
 
-    delete explicitMethodPlot;
-    delete implicitMethodPlot;
+    delete secondExperimentPlot;
+    delete firstExperimentPlot;
     delete comparisonPlot;
 }
 
 
 void diploma::calcResiduals(
-        std::vector<algorithm::Variables>& implicitExperimentVariables,
-        std::vector<algorithm::Variables>& explicitExperimentVariables,
-        std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-        std::vector<algorithm::IterationInfo>& explicitIterationsInfo)
+        std::vector<algorithm::Variables>& firstExperimentVariables,
+        std::vector<algorithm::Variables>& secondExperimentVariables,
+        std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
+        std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo)
 {
     std::cout << "*****Residuals*****" << std::endl;
-    auto size = std::min(explicitIterationsInfo.size(), implicitIterationsInfo.size());
+    auto size = std::min(secondExperimentIterationsInfo.size(), firstExperimentIterationsInfo.size());
     for (auto i = 0; i < size; i++)
     {
-        auto currentOldIteration = implicitIterationsInfo[i].index;
-        auto currentNewIteration = explicitIterationsInfo[i].index;
+        auto currentFirstExperimentIteration = firstExperimentIterationsInfo[i].index;
+        auto currentSecondExperimentIteration = secondExperimentIterationsInfo[i].index;
 
-        double radiusResidual = algorithm::calcResidual(implicitExperimentVariables[currentOldIteration].r,
-                                                        explicitExperimentVariables[currentNewIteration].r);
-        double heightResidual = algorithm::calcResidual(implicitExperimentVariables[currentOldIteration].z,
-                                                        explicitExperimentVariables[currentNewIteration].z);
+        double radiusResidual = algorithm::calcResidual(firstExperimentVariables[currentFirstExperimentIteration].r,
+                                                        secondExperimentVariables[currentSecondExperimentIteration].r);
+        double heightResidual = algorithm::calcResidual(firstExperimentVariables[currentFirstExperimentIteration].z,
+                                                        secondExperimentVariables[currentSecondExperimentIteration].z);
         double commonResidual = std::max(radiusResidual, heightResidual);
 
         std::cout << "Experiment number:" << std::endl;
-        std::cout << "Finite-difference method: #" << currentOldIteration << std::endl;
-        std::cout << "Tangential method: #" << currentNewIteration << std::endl;
+        std::cout << "First experiment: #" << currentFirstExperimentIteration << std::endl;
+        std::cout << "Second Experiment: #" << currentSecondExperimentIteration << std::endl;
         std::cout << "Residual:" << std::endl;
         std::cout << "radius: " << radiusResidual << ", height: " << heightResidual << std::endl;
         std::cout << "common: " << commonResidual << std::endl;

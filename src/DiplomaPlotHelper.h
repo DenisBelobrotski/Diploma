@@ -14,12 +14,12 @@ namespace diploma
     void configPlotAxesRanges(plot::AxesRanges& axesRanges, std::vector<plot::Graph>& graphs);
 
     plot::Plot* configComparisonPlot(
-            algorithm::Variables& oldIterationVariables, algorithm::IterationInfo& oldIterationInfo,
-            algorithm::Variables& newIterationVariables, algorithm::IterationInfo& newIterationInfo,
+            algorithm::Variables& oldIterationVariables, algorithm::IterationInfo& firstExperimentIterationInfo,
+            algorithm::Variables& secondExperimentVariables, algorithm::IterationInfo& secondExperimentIterationInfo,
             std::string title, plot::PlotOutputType outputType, std::string outputFilePath);
 
     void fillGraphTitleStreamDefault(
-            std::stringstream& titleStream, std::string title, algorithm::IterationInfo& iterationInfo);
+            std::stringstream& titleStream, const std::string& title, algorithm::IterationInfo& iterationInfo);
 
     void configDefaultPlot(plot::PlotConfig& config);
 

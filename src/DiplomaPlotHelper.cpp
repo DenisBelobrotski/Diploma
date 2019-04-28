@@ -9,9 +9,9 @@ plot::Plot* diploma::configMagneticFluidPlot(
 {
     auto graphs = new std::vector<plot::Graph>();
 
-    for (auto i = 0; i < iterationsInfo.size(); i++)
+    for (auto& currentIterationInfo : iterationsInfo)
     {
-        long long currentIteration = iterationsInfo[i].index;
+        long long currentIteration = currentIterationInfo.index;
 
         std::vector<plot::Point> points;
         plot::convertComponentsVectorsToPointsVector(iterationVariables[currentIteration].r,
@@ -20,7 +20,7 @@ plot::Plot* diploma::configMagneticFluidPlot(
 
         std::stringstream titleStream;
         titleStream << "#" << currentIteration;
-        fillGraphTitleStreamDefault(titleStream, "", iterationsInfo[i]);
+        fillGraphTitleStreamDefault(titleStream, "", currentIterationInfo);
 
         plot::Graph graph;
         graph.title = titleStream.str();
@@ -29,7 +29,7 @@ plot::Plot* diploma::configMagneticFluidPlot(
         graphs->push_back(graph);
     }
 
-    return createDefaultPlot(graphs, title, outputType, outputFilePath);
+    return createDefaultPlot(graphs, std::move(title), outputType, std::move(outputFilePath));
 }
 
 
@@ -50,19 +50,19 @@ void diploma::configPlotAxesRanges(plot::AxesRanges& axesRanges, std::vector<plo
 
 
 plot::Plot* diploma::configComparisonPlot(
-        algorithm::Variables& oldIterationVariables, algorithm::IterationInfo& oldIterationInfo,
-        algorithm::Variables& newIterationVariables, algorithm::IterationInfo& newIterationInfo,
+        algorithm::Variables& firstExperimentVariables, algorithm::IterationInfo& firstExperimentIterationInfo,
+        algorithm::Variables& secondExperimentVariables, algorithm::IterationInfo& secondExperimentIterationInfo,
         std::string title, plot::PlotOutputType outputType, std::string outputFilePath)
 {
     auto graphs = new std::vector<plot::Graph>();
 
     std::vector<plot::Point> oldPoints;
-    plot::convertComponentsVectorsToPointsVector(oldIterationVariables.r,
-                                                 oldIterationVariables.z,
+    plot::convertComponentsVectorsToPointsVector(firstExperimentVariables.r,
+                                                 firstExperimentVariables.z,
                                                  oldPoints);
 
     std::stringstream oldTitleStream;
-    fillGraphTitleStreamDefault(oldTitleStream, "Old algorithm", oldIterationInfo);
+    fillGraphTitleStreamDefault(oldTitleStream, "First experiment", firstExperimentIterationInfo);
 
     plot::Graph oldGraph;
     oldGraph.title = oldTitleStream.str();
@@ -71,12 +71,12 @@ plot::Plot* diploma::configComparisonPlot(
     graphs->push_back(oldGraph);
 
     std::vector<plot::Point> newPoints;
-    plot::convertComponentsVectorsToPointsVector(newIterationVariables.r,
-                                                 newIterationVariables.z,
+    plot::convertComponentsVectorsToPointsVector(secondExperimentVariables.r,
+                                                 secondExperimentVariables.z,
                                                  newPoints);
 
     std::stringstream newTitleStream;
-    fillGraphTitleStreamDefault(newTitleStream, "New algorithm", newIterationInfo);
+    fillGraphTitleStreamDefault(newTitleStream, "Second experiment", secondExperimentIterationInfo);
 
     plot::Graph newGraph;
     newGraph.title = newTitleStream.str();
@@ -84,12 +84,12 @@ plot::Plot* diploma::configComparisonPlot(
 
     graphs->push_back(newGraph);
 
-    return createDefaultPlot(graphs, title, outputType, outputFilePath);
+    return createDefaultPlot(graphs, std::move(title), outputType, std::move(outputFilePath));
 }
 
 
 void diploma::fillGraphTitleStreamDefault(
-        std::stringstream& titleStream, std::string title, algorithm::IterationInfo& iterationInfo)
+        std::stringstream& titleStream, const std::string& title, algorithm::IterationInfo& iterationInfo)
 {
     titleStream << title << " - "
                 << "TAU: " << iterationInfo.tau
@@ -120,10 +120,10 @@ plot::Plot* diploma::createDefaultPlot(
     auto config = new plot::PlotConfig();
     configPlotAxesRanges(axesRanges, *graphs);
     configDefaultPlot(*config);
-    config->title = title;
+    config->title = std::move(title);
     config->axesRanges = axesRanges;
     config->outputType = outputType;
-    config->outputFilePath = outputFilePath;
+    config->outputFilePath = std::move(outputFilePath);
 
     return new plot::Plot(config, graphs);
 }
