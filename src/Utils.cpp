@@ -4,7 +4,7 @@
 #include <cmath>
 
 
-void utils::printVector(std::ostream& os, std::vector<double>& vector)
+void diploma::printVector(std::ostream& os, std::vector<double>& vector)
 {
     for (const auto& currentComponent : vector)
     {
@@ -13,7 +13,7 @@ void utils::printVector(std::ostream& os, std::vector<double>& vector)
 }
 
 
-void utils::pauseExecution()
+void diploma::pauseExecution()
 {
 #ifdef _MSC_VER
     system("pause");
@@ -25,7 +25,7 @@ void utils::pauseExecution()
 }
 
 
-void utils::showIterationsProgressBar(long long currentIteration, long long maxIteration)
+void diploma::showIterationsProgressBar(long long currentIteration, long long maxIteration)
 {
     static auto divider = maxIteration / 10;
     if (currentIteration % divider == 0 && currentIteration != maxIteration)
@@ -41,7 +41,7 @@ void utils::showIterationsProgressBar(long long currentIteration, long long maxI
 }
 
 
-void utils::showProgressBar(double currentProgress)
+void diploma::showProgressBar(double currentProgress)
 {
     int barWidth = 70;
     long long pos = std::llround(barWidth * currentProgress);
@@ -67,14 +67,14 @@ void utils::showProgressBar(double currentProgress)
 }
 
 
-void utils::terminateProgressBar()
+void diploma::terminateProgressBar()
 {
     std::cout << std::endl;
     std::cout << "Calculations done!" << std::endl;
 }
 
 
-void utils::clearProgressBar()
+void diploma::clearProgressBar()
 {
     std::cout << "\r";
     std::cout.flush();

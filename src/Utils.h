@@ -5,7 +5,7 @@
 #include <ostream>
 
 
-namespace utils
+namespace diploma
 {
     void printVector(std::ostream& os, std::vector<double>& vector);
 

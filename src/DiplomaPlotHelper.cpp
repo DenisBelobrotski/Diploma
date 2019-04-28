@@ -3,7 +3,7 @@
 #include <sstream>
 
 
-plot::Plot* configMagneticFluidPlot(
+plot::Plot* diploma::configMagneticFluidPlot(
         std::vector<algorithm::Variables>& iterationVariables, std::vector<algorithm::IterationInfo>& iterationsInfo,
         std::string title, plot::PlotOutputType outputType, std::string outputFilePath)
 {
@@ -33,14 +33,7 @@ plot::Plot* configMagneticFluidPlot(
 }
 
 
-plot::Plot* configAnglesPlot(
-        std::vector<algorithm::Variables>& iterationVariables, std::vector<algorithm::IterationInfo>& iterationsInfo)
-{
-    return nullptr;
-}
-
-
-void configPlotAxesRanges(plot::AxesRanges& axesRanges, std::vector<plot::Graph>& graphs)
+void diploma::configPlotAxesRanges(plot::AxesRanges& axesRanges, std::vector<plot::Graph>& graphs)
 {
 
     for (auto& currentGraph : graphs)
@@ -56,7 +49,7 @@ void configPlotAxesRanges(plot::AxesRanges& axesRanges, std::vector<plot::Graph>
 }
 
 
-plot::Plot* configComparisonPlot(
+plot::Plot* diploma::configComparisonPlot(
         algorithm::Variables& oldIterationVariables, algorithm::IterationInfo& oldIterationInfo,
         algorithm::Variables& newIterationVariables, algorithm::IterationInfo& newIterationInfo,
         std::string title, plot::PlotOutputType outputType, std::string outputFilePath)
@@ -95,7 +88,7 @@ plot::Plot* configComparisonPlot(
 }
 
 
-void fillGraphTitleStreamDefault(
+void diploma::fillGraphTitleStreamDefault(
         std::stringstream& titleStream, std::string title, algorithm::IterationInfo& iterationInfo)
 {
     titleStream << title << " - "
@@ -108,7 +101,7 @@ void fillGraphTitleStreamDefault(
 }
 
 
-void configDefaultPlot(plot::PlotConfig& config)
+void diploma::configDefaultPlot(plot::PlotConfig& config)
 {
     config.windowWidth = 1600;
     config.windowHeight = 900;
@@ -119,7 +112,7 @@ void configDefaultPlot(plot::PlotConfig& config)
 }
 
 
-plot::Plot* createDefaultPlot(
+plot::Plot* diploma::createDefaultPlot(
         std::vector<plot::Graph>* graphs, std::string title, plot::PlotOutputType outputType,
         std::string outputFilePath)
 {

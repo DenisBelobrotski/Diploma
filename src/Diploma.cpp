@@ -15,28 +15,31 @@
 #include <MagneticFluidFormAlgorithm/MathUtils.h>
 
 
-void calcResults(
-        std::vector<algorithm::Variables>& implicitExperimentVariables,
-        std::vector<algorithm::Variables>& explicitExperimentVariables,
-        std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-        std::vector<algorithm::IterationInfo>& explicitIterationsInfo);
+namespace diploma
+{
+    void calcResults(
+            std::vector<algorithm::Variables>& implicitExperimentVariables,
+            std::vector<algorithm::Variables>& explicitExperimentVariables,
+            std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
+            std::vector<algorithm::IterationInfo>& explicitIterationsInfo);
 
-void makePlots(
-        std::vector<algorithm::Variables>& implicitExperimentVariables,
-        std::vector<algorithm::Variables>& explicitExperimentVariables,
-        std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-        std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
-        bool needPauseExecution);
+    void makePlots(
+            std::vector<algorithm::Variables>& implicitExperimentVariables,
+            std::vector<algorithm::Variables>& explicitExperimentVariables,
+            std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
+            std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
+            bool needPauseExecution);
 
-void calcResiduals(
-        std::vector<algorithm::Variables>& implicitExperimentVariables,
-        std::vector<algorithm::Variables>& explicitExperimentVariables,
-        std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-        std::vector<algorithm::IterationInfo>& explicitIterationsInfo);
+    void calcResiduals(
+            std::vector<algorithm::Variables>& implicitExperimentVariables,
+            std::vector<algorithm::Variables>& explicitExperimentVariables,
+            std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
+            std::vector<algorithm::IterationInfo>& explicitIterationsInfo);
 
-void printTotalDuration(
-        std::chrono::time_point<std::chrono::steady_clock>& start,
-        std::chrono::time_point<std::chrono::steady_clock>& end);
+    void printTotalDuration(
+            std::chrono::time_point<std::chrono::steady_clock>& start,
+            std::chrono::time_point<std::chrono::steady_clock>& end);
+}
 
 
 int main()
@@ -50,38 +53,38 @@ int main()
         std::vector<algorithm::IterationInfo> implicitIterationsInfo;
         std::vector<algorithm::IterationInfo> explicitIterationsInfo;
 
-        calcResults(
+        diploma::calcResults(
                 implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
                 explicitIterationsInfo);
 
         if (isNeedCalculateResiduals)
         {
-            calcResiduals(
+            diploma::calcResiduals(
                     implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
                     explicitIterationsInfo);
         }
 
-        makePlots(implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
-                  explicitIterationsInfo, true);
+        diploma::makePlots(implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
+                           explicitIterationsInfo, true);
     }
     catch (std::runtime_error& e)
     {
         std::cerr << e.what() << std::endl;
-        utils::pauseExecution();
+        diploma::pauseExecution();
     }
 
     return 0;
 }
 
 
-void calcResults(
+void diploma::calcResults(
         std::vector<algorithm::Variables>& implicitExperimentVariables,
         std::vector<algorithm::Variables>& explicitExperimentVariables,
         std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
         std::vector<algorithm::IterationInfo>& explicitIterationsInfo)
 {
     algorithm::AlgorithmConfigurator algorithmConfigurator(
-            "../res/diploma_90_grad.json", algorithm::ConfigFileTypeJson);
+            "../res/diploma_simple.json", algorithm::ConfigFileTypeJson);
 
     algorithm::InitialParameters* initialParameters = algorithmConfigurator.readAlgorithmInitialParameters();
 
@@ -98,7 +101,7 @@ void calcResults(
     std::function<void(long long, long long)> showIterationsProgressBarFunction =
             [](long long currentIteration, long long maxIterations)
             {
-                utils::showIterationsProgressBar(currentIteration, maxIterations);
+                diploma::showIterationsProgressBar(currentIteration, maxIterations);
             };
     implicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
     explicitDifferenceMethod->setIterationFinishedCallback(&showIterationsProgressBarFunction);
@@ -163,7 +166,7 @@ void calcResults(
 }
 
 
-void makePlots(
+void diploma::makePlots(
         std::vector<algorithm::Variables>& implicitExperimentVariables,
         std::vector<algorithm::Variables>& explicitExperimentVariables,
         std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
@@ -193,7 +196,7 @@ void makePlots(
 
     if (needPauseExecution)
     {
-        utils::pauseExecution();
+        diploma::pauseExecution();
     }
 
     delete explicitMethodPlot;
@@ -202,7 +205,7 @@ void makePlots(
 }
 
 
-void calcResiduals(
+void diploma::calcResiduals(
         std::vector<algorithm::Variables>& implicitExperimentVariables,
         std::vector<algorithm::Variables>& explicitExperimentVariables,
         std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
@@ -232,7 +235,7 @@ void calcResiduals(
 }
 
 
-void printTotalDuration(
+void diploma::printTotalDuration(
         std::chrono::time_point<std::chrono::steady_clock>& start,
         std::chrono::time_point<std::chrono::steady_clock>& end)
 {

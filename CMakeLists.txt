@@ -19,10 +19,12 @@ set(LIBS_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/libs)
 
 set(GNUPLOT_WRAPPER_ROOT ${LIBS_ROOT}/GnuplotWrapper)
 set(MAGNETIC_FLUID_FORM_ALGORITHM_ROOT ${LIBS_ROOT}/MagneticFluidFormAlgorithm)
+set(RAPIDJSON_ROOT ${LIBS_ROOT}/rapidjson)
 
 include_directories(
 		${GNUPLOT_WRAPPER_ROOT}/include
-		${MAGNETIC_FLUID_FORM_ALGORITHM_ROOT}/include)
+		${MAGNETIC_FLUID_FORM_ALGORITHM_ROOT}/include
+		${RAPIDJSON_ROOT}/include)
 
 add_subdirectory(${GNUPLOT_WRAPPER_ROOT})
 add_subdirectory(${MAGNETIC_FLUID_FORM_ALGORITHM_ROOT})

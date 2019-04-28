@@ -27,6 +27,7 @@
         ]
     },
     "diplomaConfig": {
+        "isNeedPauseExecutionBeforeTerminate": true,
         "isNonUniformConcentration": true,
         "isNeedCalculateResiduals": true,
         "isNeedMakeComparisonPlot": true
