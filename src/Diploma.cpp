@@ -1,6 +1,7 @@
 #include "Diploma.h"
 #include "Utils.h"
 #include "DiplomaPlotHelper.h"
+#include "Configurator.h"
 
 #include <iostream>
 #include <chrono>
@@ -17,18 +18,21 @@
 
 namespace diploma
 {
+    const auto CONFIG_FILE_PATH = "../res/diploma_full.json";
+
     void calcResults(
             std::vector<algorithm::Variables>& implicitExperimentVariables,
             std::vector<algorithm::Variables>& explicitExperimentVariables,
             std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-            std::vector<algorithm::IterationInfo>& explicitIterationsInfo);
+            std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
+            Configurator& configurator);
 
     void makePlots(
             std::vector<algorithm::Variables>& implicitExperimentVariables,
             std::vector<algorithm::Variables>& explicitExperimentVariables,
             std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
             std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
-            bool needPauseExecution);
+            Configurator& configurator);
 
     void calcResiduals(
             std::vector<algorithm::Variables>& implicitExperimentVariables,
@@ -46,7 +50,8 @@ int main()
 {
     try
     {
-        const bool isNeedCalculateResiduals = false;
+        diploma::Configurator diplomaConfigurator(diploma::CONFIG_FILE_PATH, diploma::ConfigFileTypeJson);
+
         std::vector<algorithm::Variables> implicitExperimentVariables;
         std::vector<algorithm::Variables> explicitExperimentVariables;
 
@@ -55,9 +60,9 @@ int main()
 
         diploma::calcResults(
                 implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
-                explicitIterationsInfo);
+                explicitIterationsInfo, diplomaConfigurator);
 
-        if (isNeedCalculateResiduals)
+        if (diplomaConfigurator.isNeedCalculateResiduals())
         {
             diploma::calcResiduals(
                     implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
@@ -65,7 +70,7 @@ int main()
         }
 
         diploma::makePlots(implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
-                           explicitIterationsInfo, true);
+                           explicitIterationsInfo, diplomaConfigurator);
     }
     catch (std::runtime_error& e)
     {
@@ -81,19 +86,32 @@ void diploma::calcResults(
         std::vector<algorithm::Variables>& implicitExperimentVariables,
         std::vector<algorithm::Variables>& explicitExperimentVariables,
         std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
-        std::vector<algorithm::IterationInfo>& explicitIterationsInfo)
+        std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
+        Configurator& configurator)
 {
-    algorithm::AlgorithmConfigurator algorithmConfigurator(
-            "../res/diploma_simple.json", algorithm::ConfigFileTypeJson);
+    algorithm::AlgorithmConfigurator algorithmConfigurator(diploma::CONFIG_FILE_PATH, algorithm::ConfigFileTypeJson);
 
     algorithm::InitialParameters* initialParameters = algorithmConfigurator.readAlgorithmInitialParameters();
 
     std::vector<algorithm::TargetParameter>* targetParameters = algorithmConfigurator.readAlgorithmSequenceFromFile();
 
-    algorithm::DifferenceMethod* implicitDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
-            &implicitExperimentVariables, &implicitIterationsInfo, initialParameters);
-    algorithm::DifferenceMethod* explicitDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
-            &explicitExperimentVariables, &explicitIterationsInfo, initialParameters);
+    algorithm::DifferenceMethod* implicitDifferenceMethod = nullptr;
+    algorithm::DifferenceMethod* explicitDifferenceMethod = nullptr;
+
+    if (configurator.isNonUniformConcentration())
+    {
+        implicitDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
+                &implicitExperimentVariables, &implicitIterationsInfo, initialParameters);
+        explicitDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
+                &explicitExperimentVariables, &explicitIterationsInfo, initialParameters);
+    }
+    else
+    {
+        implicitDifferenceMethod = new algorithm::ImplicitMethodUniformConcentration(
+                &implicitExperimentVariables, &implicitIterationsInfo, initialParameters);
+        explicitDifferenceMethod = new algorithm::ExplicitMethodUniformConcentration(
+                &explicitExperimentVariables, &explicitIterationsInfo, initialParameters);
+    }
 
     implicitDifferenceMethod->setIsNeedResetTau(false);
     explicitDifferenceMethod->setIsNeedResetTau(false);
@@ -171,10 +189,8 @@ void diploma::makePlots(
         std::vector<algorithm::Variables>& explicitExperimentVariables,
         std::vector<algorithm::IterationInfo>& implicitIterationsInfo,
         std::vector<algorithm::IterationInfo>& explicitIterationsInfo,
-        bool needPauseExecution)
+        Configurator& configurator)
 {
-    const bool isNeedMakeComparisonPlot = false;
-
     plot::Plot* implicitMethodPlot = configMagneticFluidPlot(
             implicitExperimentVariables, implicitIterationsInfo, "Finite-difference method",
             plot::PlotOutputTypeWindow, "");
@@ -189,12 +205,12 @@ void diploma::makePlots(
             implicitExperimentVariables.back(), implicitIterationsInfo.back(), explicitExperimentVariables.back(),
             explicitIterationsInfo.back(), "Comparison", plot::PlotOutputTypeWindow, "");
 
-    if (isNeedMakeComparisonPlot)
+    if (configurator.isNeedMakeComparisonPlot())
     {
         comparisonPlot->makeGraphs();
     }
 
-    if (needPauseExecution)
+    if (configurator.isNeedPauseExecutionBeforeTermination())
     {
         diploma::pauseExecution();
     }
