@@ -1,0 +1,47 @@
+{
+    "algorithmConfig": {
+        "nodesNumber": 200,
+        "targetAccuracy": 1E-5,
+        "maxIterationsNumber": 30000,
+        "minRelaxationParameter": 0.05,
+        "relaxationMultiplier": 0.5,
+        "initialTAU": 1,
+        "initialU": 3,
+        "initialB0": 1,
+        "initialA1": 6,
+        "initialA2": 0.05,
+        "initialALPHA": 0.78539816339744830962,
+        "calculationsSequence": [
+            {
+                "parameterName": "A2",
+                "targetValue": 0.1,
+                "step": 0.05,
+                "drawRate": -1
+            },
+            {
+                "parameterName": "A2",
+                "targetValue": 3,
+                "step": 0.05,
+                "drawRate": -1
+            },
+            {
+                "parameterName": "A2",
+                "targetValue": 6,
+                "step": 0.05,
+                "drawRate": -1
+            },
+            {
+                "parameterName": "A2",
+                "targetValue": 9,
+                "step": 0.05,
+                "drawRate": -1
+            }
+        ]
+    },
+    "diplomaConfig": {
+        "isNeedPauseExecutionBeforeTermination": true,
+        "isNonUniformConcentration": true,
+        "isNeedCalculateResiduals": true,
+        "isNeedMakeComparisonPlot": true
+    }
+}
