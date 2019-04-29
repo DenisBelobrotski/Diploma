@@ -16,6 +16,7 @@
                 "end": 6
             }
         },
+        "isNeedOptimizeRangesBounds": true,
         "equalAxes": true,
         "outputType": 0,
         "outputFilePath": null

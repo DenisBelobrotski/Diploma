@@ -70,6 +70,7 @@
     },
     "diplomaConfig": {
         "isNeedPauseExecutionBeforeTermination": true,
-        "isNonUniformConcentration": true
+        "isNonUniformConcentration": true,
+        "isNeedShowFullInfoInLegend": false
     }
 }

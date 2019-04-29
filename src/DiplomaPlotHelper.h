@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GnuplotWrapper/GnuplotWrapper.h>
+#include <GnuplotWrapper/Plot.h>
 #include <MagneticFluidFormAlgorithm/DifferenceMethod.h>
 
 
@@ -10,8 +10,6 @@ namespace diploma
             std::vector<algorithm::Variables>& iterationVariables,
             std::vector<algorithm::IterationInfo>& iterationsInfo,
             std::string title, plot::PlotOutputType outputType, std::string outputFilePath);
-
-    void configPlotAxesRanges(plot::AxesRanges& axesRanges, std::vector<plot::Graph>& graphs);
 
     plot::Plot* configComparisonPlot(
             algorithm::Variables& oldIterationVariables, algorithm::IterationInfo& firstExperimentIterationInfo,

@@ -42,6 +42,7 @@
         "isNeedPauseExecutionBeforeTermination": true,
         "isNonUniformConcentration": true,
         "isNeedCalculateResiduals": true,
-        "isNeedMakeComparisonPlot": true
+        "isNeedMakeComparisonPlot": true,
+        "isNeedShowFullInfoInLegend": false
     }
 }
