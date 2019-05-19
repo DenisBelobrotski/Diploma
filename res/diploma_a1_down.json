@@ -8,7 +8,7 @@
         "initialTAU": 1,
         "initialU": 3,
         "initialB0": 1,
-        "initialA1": 6,
+        "initialA1": 7,
         "initialA2": 0.05,
         "initialALPHA": 0.78539816339744830962,
         "calculationsSequence": [
@@ -28,6 +28,12 @@
                 "parameterName": "A2",
                 "targetValue": 3,
                 "step": 0.05,
+                "drawRate": -2
+            },
+            {
+                "parameterName": "A1",
+                "targetValue": 6,
+                "step": 0.1,
                 "drawRate": -1
             },
             {

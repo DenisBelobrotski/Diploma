@@ -16,11 +16,17 @@
                 "parameterName": "U",
                 "targetValue": 101,
                 "step": 1,
+                "drawRate": -2
+            },
+            {
+                "parameterName": "A2",
+                "targetValue": 0.1,
+                "step": 0.05,
                 "drawRate": -1
             },
             {
                 "parameterName": "A2",
-                "targetValue": 1,
+                "targetValue": 1.05,
                 "step": 0.05,
                 "drawRate": -1
             },
@@ -28,11 +34,11 @@
                 "parameterName": "A2",
                 "targetValue": 1.5,
                 "step": 0.05,
-                "drawRate": -1
+                "drawRate": -2
             },
             {
                 "parameterName": "A2",
-                "targetValue": 2,
+                "targetValue": 2.05,
                 "step": 0.05,
                 "drawRate": -1
             },
@@ -40,7 +46,7 @@
                 "parameterName": "A2",
                 "targetValue": 2.5,
                 "step": 0.05,
-                "drawRate": -1
+                "drawRate": -2
             },
             {
                 "parameterName": "A2",
@@ -52,7 +58,7 @@
                 "parameterName": "A2",
                 "targetValue": 3.5,
                 "step": 0.05,
-                "drawRate": -1
+                "drawRate": -2
             },
             {
                 "parameterName": "A2",
