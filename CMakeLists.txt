@@ -34,3 +34,6 @@ file(GLOB_RECURSE proj_sources ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 add_executable (Diploma ${proj_sources})
 
 target_link_libraries(Diploma GnuplotWrapper MagneticFluidFormAlgorithm)
+
+install(TARGETS Diploma
+		DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/bin)
