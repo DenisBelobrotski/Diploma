@@ -7,13 +7,12 @@
 namespace diploma
 {
     plot::Plot* configMagneticFluidPlot(
-            std::vector<algorithm::Variables>& iterationVariables,
-            std::vector<algorithm::IterationInfo>& iterationsInfo,
-            std::string title, plot::PlotOutputType outputType, std::string outputFilePath);
+            std::vector<algorithm::IterationInfo>& iterationsInfo, std::string title,
+            plot::PlotOutputType outputType, std::string outputFilePath);
 
     plot::Plot* configComparisonPlot(
-            algorithm::Variables& oldIterationVariables, algorithm::IterationInfo& firstExperimentIterationInfo,
-            algorithm::Variables& secondExperimentVariables, algorithm::IterationInfo& secondExperimentIterationInfo,
+            algorithm::IterationInfo& firstExperimentIterationInfo,
+            algorithm::IterationInfo& secondExperimentIterationInfo,
             std::string title, plot::PlotOutputType outputType, std::string outputFilePath);
 
     void fillGraphTitleStreamDefault(

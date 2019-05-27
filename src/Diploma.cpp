@@ -21,22 +21,16 @@ namespace diploma
     const auto CONFIG_FILE_PATH = "../res/diploma_90_grad_uniform.json";
 
     void calcResults(
-            std::vector<algorithm::Variables>& firstExperimentVariables,
-            std::vector<algorithm::Variables>& secondExperimentVariables,
             std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
             std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo,
             Configurator& configurator);
 
     void makePlots(
-            std::vector<algorithm::Variables>& firstExperimentVariables,
-            std::vector<algorithm::Variables>& secondExperimentVariables,
             std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
             std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo,
             Configurator& configurator);
 
     void calcResiduals(
-            std::vector<algorithm::Variables>& firstExperimentVariables,
-            std::vector<algorithm::Variables>& secondExperimentVariables,
             std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
             std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo);
 
@@ -52,25 +46,17 @@ int main()
     {
         diploma::Configurator diplomaConfigurator(diploma::CONFIG_FILE_PATH, diploma::ConfigFileTypeJson);
 
-        std::vector<algorithm::Variables> implicitExperimentVariables;
-        std::vector<algorithm::Variables> explicitExperimentVariables;
-
         std::vector<algorithm::IterationInfo> implicitIterationsInfo;
         std::vector<algorithm::IterationInfo> explicitIterationsInfo;
 
-        diploma::calcResults(
-                implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
-                explicitIterationsInfo, diplomaConfigurator);
+        diploma::calcResults(implicitIterationsInfo, explicitIterationsInfo, diplomaConfigurator);
 
         if (diplomaConfigurator.isNeedCalculateResiduals())
         {
-            diploma::calcResiduals(
-                    implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
-                    explicitIterationsInfo);
+            diploma::calcResiduals(implicitIterationsInfo, explicitIterationsInfo);
         }
 
-        diploma::makePlots(implicitExperimentVariables, explicitExperimentVariables, implicitIterationsInfo,
-                           explicitIterationsInfo, diplomaConfigurator);
+        diploma::makePlots(implicitIterationsInfo, explicitIterationsInfo, diplomaConfigurator);
     }
     catch (std::runtime_error& e)
     {
@@ -83,8 +69,6 @@ int main()
 
 
 void diploma::calcResults(
-        std::vector<algorithm::Variables>& firstExperimentVariables,
-        std::vector<algorithm::Variables>& secondExperimentVariables,
         std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
         std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo,
         Configurator& configurator)
@@ -100,24 +84,24 @@ void diploma::calcResults(
 
     if (configurator.isComparisonUniformNonUniform())
     {
-        firstDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
-                &firstExperimentVariables, &firstExperimentIterationsInfo, initialParameters);
-        secondDifferenceMethod = new algorithm::ImplicitMethodUniformConcentration(
-                &secondExperimentVariables, &secondExperimentIterationsInfo, initialParameters);
+        firstDifferenceMethod =
+                new algorithm::ImplicitDifferenceMethod(&firstExperimentIterationsInfo, initialParameters);
+        secondDifferenceMethod =
+                new algorithm::ImplicitMethodUniformConcentration(&secondExperimentIterationsInfo, initialParameters);
     }
     else if (configurator.isNonUniformConcentration())
     {
-        firstDifferenceMethod = new algorithm::ImplicitDifferenceMethod(
-                &firstExperimentVariables, &firstExperimentIterationsInfo, initialParameters);
-        secondDifferenceMethod = new algorithm::ExplicitDifferenceMethod(
-                &secondExperimentVariables, &secondExperimentIterationsInfo, initialParameters);
+        firstDifferenceMethod =
+                new algorithm::ImplicitDifferenceMethod(&firstExperimentIterationsInfo, initialParameters);
+        secondDifferenceMethod =
+                new algorithm::ExplicitDifferenceMethod(&secondExperimentIterationsInfo, initialParameters);
     }
     else
     {
-        firstDifferenceMethod = new algorithm::ImplicitMethodUniformConcentration(
-                &firstExperimentVariables, &firstExperimentIterationsInfo, initialParameters);
-        secondDifferenceMethod = new algorithm::ExplicitMethodUniformConcentration(
-                &secondExperimentVariables, &secondExperimentIterationsInfo, initialParameters);
+        firstDifferenceMethod =
+                new algorithm::ImplicitMethodUniformConcentration(&firstExperimentIterationsInfo, initialParameters);
+        secondDifferenceMethod =
+                new algorithm::ExplicitMethodUniformConcentration(&secondExperimentIterationsInfo, initialParameters);
     }
 
     firstDifferenceMethod->setIsNeedResetTau(false);
@@ -192,25 +176,24 @@ void diploma::calcResults(
 
 
 void diploma::makePlots(
-        std::vector<algorithm::Variables>& firstExperimentVariables,
-        std::vector<algorithm::Variables>& secondExperimentVariables,
         std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
         std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo,
         Configurator& configurator)
 {
-    plot::Plot* firstExperimentPlot = configMagneticFluidPlot(
-            firstExperimentVariables, firstExperimentIterationsInfo, "First experiment",
-            plot::PlotOutputTypeWindow, "");
+    plot::Plot* firstExperimentPlot =
+            configMagneticFluidPlot(
+                    firstExperimentIterationsInfo, "First experiment", plot::PlotOutputTypeWindow, "");
     firstExperimentPlot->makeGraphs();
 
-    plot::Plot* secondExperimentPlot = configMagneticFluidPlot(
-            secondExperimentVariables, secondExperimentIterationsInfo, "Second experiment", plot::PlotOutputTypeWindow,
-            "");
+    plot::Plot* secondExperimentPlot =
+            configMagneticFluidPlot(
+                    secondExperimentIterationsInfo, "Second experiment", plot::PlotOutputTypeWindow, "");
     secondExperimentPlot->makeGraphs();
 
-    plot::Plot* comparisonPlot = configComparisonPlot(
-            firstExperimentVariables.back(), firstExperimentIterationsInfo.back(), secondExperimentVariables.back(),
-            secondExperimentIterationsInfo.back(), "Comparison", plot::PlotOutputTypeWindow, "");
+    plot::Plot* comparisonPlot =
+            configComparisonPlot(
+                    firstExperimentIterationsInfo.back(), secondExperimentIterationsInfo.back(), "Comparison",
+                    plot::PlotOutputTypeWindow, "");
 
     if (configurator.isNeedMakeComparisonPlot())
     {
@@ -229,8 +212,6 @@ void diploma::makePlots(
 
 
 void diploma::calcResiduals(
-        std::vector<algorithm::Variables>& firstExperimentVariables,
-        std::vector<algorithm::Variables>& secondExperimentVariables,
         std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
         std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo)
 {
@@ -238,18 +219,18 @@ void diploma::calcResiduals(
     auto size = std::min(secondExperimentIterationsInfo.size(), firstExperimentIterationsInfo.size());
     for (auto i = 0; i < size; i++)
     {
-        auto currentFirstExperimentIteration = firstExperimentIterationsInfo[i].index;
-        auto currentSecondExperimentIteration = secondExperimentIterationsInfo[i].index;
+        auto& currentFirstExperimentIterationInfo = firstExperimentIterationsInfo[i];
+        auto& currentSecondExperimentIterationInfo = secondExperimentIterationsInfo[i];
 
-        double radiusResidual = algorithm::calcResidual(firstExperimentVariables[currentFirstExperimentIteration].r,
-                                                        secondExperimentVariables[currentSecondExperimentIteration].r);
-        double heightResidual = algorithm::calcResidual(firstExperimentVariables[currentFirstExperimentIteration].z,
-                                                        secondExperimentVariables[currentSecondExperimentIteration].z);
+        double radiusResidual = algorithm::calcResidual(currentFirstExperimentIterationInfo.variables.r,
+                                                        currentSecondExperimentIterationInfo.variables.r);
+        double heightResidual = algorithm::calcResidual(currentFirstExperimentIterationInfo.variables.z,
+                                                        currentSecondExperimentIterationInfo.variables.z);
         double commonResidual = std::max(radiusResidual, heightResidual);
 
         std::cout << "Experiment number:" << std::endl;
-        std::cout << "First experiment: #" << currentFirstExperimentIteration << std::endl;
-        std::cout << "Second Experiment: #" << currentSecondExperimentIteration << std::endl;
+        std::cout << "First experiment: #" << currentFirstExperimentIterationInfo.index << std::endl;
+        std::cout << "Second Experiment: #" << currentSecondExperimentIterationInfo.index << std::endl;
         std::cout << "Residual:" << std::endl;
         std::cout << "radius: " << radiusResidual << ", height: " << heightResidual << std::endl;
         std::cout << "common: " << commonResidual << std::endl;

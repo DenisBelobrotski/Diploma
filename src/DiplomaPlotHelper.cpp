@@ -6,21 +6,19 @@
 
 
 plot::Plot* diploma::configMagneticFluidPlot(
-        std::vector<algorithm::Variables>& iterationVariables, std::vector<algorithm::IterationInfo>& iterationsInfo,
-        std::string title, plot::PlotOutputType outputType, std::string outputFilePath)
+        std::vector<algorithm::IterationInfo>& iterationsInfo, std::string title,
+        plot::PlotOutputType outputType, std::string outputFilePath)
 {
     auto graphs = new std::vector<plot::Graph>();
 
     for (auto& currentIterationInfo : iterationsInfo)
     {
-        long long currentIteration = currentIterationInfo.index;
-
         std::vector<plot::Point> points;
         plot::convertComponentsVectorsToPointsVector(
-                iterationVariables[currentIteration].r, iterationVariables[currentIteration].z, points);
+                currentIterationInfo.variables.r, currentIterationInfo.variables.z, points);
 
         std::stringstream titleStream;
-        titleStream << "#" << currentIteration;
+        titleStream << "#" << currentIterationInfo.index;
         fillGraphTitleStreamDefault(titleStream, "", currentIterationInfo);
 
         plot::Graph graph;
@@ -35,15 +33,16 @@ plot::Plot* diploma::configMagneticFluidPlot(
 
 
 plot::Plot* diploma::configComparisonPlot(
-        algorithm::Variables& firstExperimentVariables, algorithm::IterationInfo& firstExperimentIterationInfo,
-        algorithm::Variables& secondExperimentVariables, algorithm::IterationInfo& secondExperimentIterationInfo,
+        algorithm::IterationInfo& firstExperimentIterationInfo,
+        algorithm::IterationInfo& secondExperimentIterationInfo,
         std::string title, plot::PlotOutputType outputType, std::string outputFilePath)
 {
     auto graphs = new std::vector<plot::Graph>();
 
     std::vector<plot::Point> firstExperimentPoints;
     plot::convertComponentsVectorsToPointsVector(
-            firstExperimentVariables.r, firstExperimentVariables.z, firstExperimentPoints);
+            firstExperimentIterationInfo.variables.r, firstExperimentIterationInfo.variables.z,
+            firstExperimentPoints);
 
     std::stringstream firstExperimentTitleStream;
     fillGraphTitleStreamDefault(firstExperimentTitleStream, "First experiment", firstExperimentIterationInfo);
@@ -56,7 +55,8 @@ plot::Plot* diploma::configComparisonPlot(
 
     std::vector<plot::Point> secondExperimentPoints;
     plot::convertComponentsVectorsToPointsVector(
-            secondExperimentVariables.r, secondExperimentVariables.z, secondExperimentPoints);
+            secondExperimentIterationInfo.variables.r, secondExperimentIterationInfo.variables.z,
+            secondExperimentPoints);
 
     std::stringstream secondExperimentTitleStream;
     fillGraphTitleStreamDefault(secondExperimentTitleStream, "Second experiment", secondExperimentIterationInfo);
@@ -80,12 +80,12 @@ void diploma::fillGraphTitleStreamDefault(
 
     if (isNeedShowFullInfoInLegend)
     {
-        titleStream << "TAU: " << iterationInfo.tau
-                    << ", U: " << iterationInfo.u
-                    << ", B0: " << iterationInfo.b0
-                    << ", A1: " << iterationInfo.a1
-                    << ", A2: " << iterationInfo.a2
-                    << ", ALPHA: " << iterationInfo.alpha;
+        titleStream << "TAU: " << iterationInfo.variables.TAU
+                    << ", U: " << iterationInfo.variables.U
+                    << ", B0: " << iterationInfo.variables.B0
+                    << ", A1: " << iterationInfo.variables.A1
+                    << ", A2: " << iterationInfo.variables.A2
+                    << ", ALPHA: " << iterationInfo.variables.ALPHA;
     }
     else
     {
