@@ -75,9 +75,9 @@ void diploma::calcResults(
 {
     algorithm::AlgorithmConfigurator algorithmConfigurator(diploma::CONFIG_FILE_PATH, algorithm::ConfigFileTypeJson);
 
-    algorithm::InitialParameters* initialParameters = algorithmConfigurator.readAlgorithmInitialParameters();
+    auto* initialParameters = algorithmConfigurator.readAlgorithmInitialParameters();
 
-    std::vector<algorithm::TargetParameter>* targetParameters = algorithmConfigurator.readAlgorithmSequenceFromFile();
+    auto* targetParameters = algorithmConfigurator.readAlgorithmSequenceFromFile();
 
     algorithm::DifferenceMethod* firstDifferenceMethod = nullptr;
     algorithm::DifferenceMethod* secondDifferenceMethod = nullptr;
