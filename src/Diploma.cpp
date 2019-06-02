@@ -182,17 +182,17 @@ void diploma::makePlots(
 {
     plot::Plot* firstExperimentPlot =
             configMagneticFluidPlot(
-                    firstExperimentIterationsInfo, "First experiment", plot::PlotOutputTypeWindow, "");
+                    firstExperimentIterationsInfo, "", plot::PlotOutputTypeWindow, "");
     firstExperimentPlot->makeGraphs();
 
     plot::Plot* secondExperimentPlot =
             configMagneticFluidPlot(
-                    secondExperimentIterationsInfo, "Second experiment", plot::PlotOutputTypeWindow, "");
+                    secondExperimentIterationsInfo, "", plot::PlotOutputTypeWindow, "");
     secondExperimentPlot->makeGraphs();
 
     plot::Plot* comparisonPlot =
             configComparisonPlot(
-                    firstExperimentIterationsInfo.back(), secondExperimentIterationsInfo.back(), "Comparison",
+                    firstExperimentIterationsInfo.back(), secondExperimentIterationsInfo.back(), "",
                     plot::PlotOutputTypeWindow, "");
 
     if (configurator.isNeedMakeComparisonPlot())

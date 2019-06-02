@@ -18,7 +18,6 @@ plot::Plot* diploma::configMagneticFluidPlot(
                 currentIterationInfo.variables.r, currentIterationInfo.variables.z, points);
 
         std::stringstream titleStream;
-        titleStream << "#" << currentIterationInfo.index;
         fillGraphTitleStreamDefault(titleStream, "", currentIterationInfo);
 
         plot::Graph graph;
@@ -45,7 +44,7 @@ plot::Plot* diploma::configComparisonPlot(
             firstExperimentPoints);
 
     std::stringstream firstExperimentTitleStream;
-    fillGraphTitleStreamDefault(firstExperimentTitleStream, "First experiment", firstExperimentIterationInfo);
+    fillGraphTitleStreamDefault(firstExperimentTitleStream, "", firstExperimentIterationInfo);
 
     plot::Graph firstExperimentGraph;
     firstExperimentGraph.title = firstExperimentTitleStream.str();
@@ -59,7 +58,7 @@ plot::Plot* diploma::configComparisonPlot(
             secondExperimentPoints);
 
     std::stringstream secondExperimentTitleStream;
-    fillGraphTitleStreamDefault(secondExperimentTitleStream, "Second experiment", secondExperimentIterationInfo);
+    fillGraphTitleStreamDefault(secondExperimentTitleStream, "", secondExperimentIterationInfo);
 
     plot::Graph secondExperimentGraph;
     secondExperimentGraph.title = secondExperimentTitleStream.str();
@@ -75,9 +74,7 @@ void diploma::fillGraphTitleStreamDefault(
         std::stringstream& titleStream, const std::string& title, algorithm::IterationInfo& iterationInfo)
 {
     const bool isNeedShowFullInfoInLegend = false;
-
-    titleStream << title << " - ";
-
+    
     if (isNeedShowFullInfoInLegend)
     {
         titleStream << "TAU: " << iterationInfo.variables.TAU
@@ -98,8 +95,8 @@ void diploma::configDefaultPlot(plot::PlotConfig& config)
 {
     config.windowWidth = 1600;
     config.windowHeight = 900;
-    config.xAxisName = "Radius";
-    config.yAxisName = "Height";
+    config.xAxisName = "Радиус (R)";
+    config.yAxisName = "Высота (Z)";
     config.legendFontSize = 8;
     config.equalAxes = true;
 }
