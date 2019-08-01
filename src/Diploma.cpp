@@ -7,7 +7,7 @@
 #include <chrono>
 #include <future>
 
-#include <MagneticFluidFormAlgorithm/AlgorithmConfigurator.h>
+#include <MagneticFluidFormAlgorithm/ConfigJsonFileReader.h>
 #include <MagneticFluidFormAlgorithm/DifferenceMethod.h>
 #include <MagneticFluidFormAlgorithm/ExplicitDifferenceMethod.h>
 #include <MagneticFluidFormAlgorithm/ImplicitDifferenceMethod.h>
@@ -18,7 +18,7 @@
 
 namespace diploma
 {
-    const auto CONFIG_FILE_PATH = "../res/diploma_90_grad_uniform.json";
+    const auto CONFIG_FILE_PATH = "../res/diploma_a2_up.json";
 
     void calcResults(
             std::vector<algorithm::IterationInfo>& firstExperimentIterationsInfo,
@@ -73,11 +73,11 @@ void diploma::calcResults(
         std::vector<algorithm::IterationInfo>& secondExperimentIterationsInfo,
         Configurator& configurator)
 {
-    algorithm::AlgorithmConfigurator algorithmConfigurator(diploma::CONFIG_FILE_PATH, algorithm::ConfigFileTypeJson);
+    algorithm::ConfigJsonFileReader jsonFileReader(diploma::CONFIG_FILE_PATH);
 
-    auto* initialParameters = algorithmConfigurator.readAlgorithmInitialParameters();
+    auto* initialParameters = jsonFileReader.getAlgorithmInitialParameters();
 
-    auto* targetParameters = algorithmConfigurator.readAlgorithmSequenceFromFile();
+    auto* targetParameters = jsonFileReader.getCalculationsSequence();
 
     algorithm::DifferenceMethod* firstDifferenceMethod = nullptr;
     algorithm::DifferenceMethod* secondDifferenceMethod = nullptr;
